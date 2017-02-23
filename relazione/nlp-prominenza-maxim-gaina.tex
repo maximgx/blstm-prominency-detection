@@ -1,24 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Journal Article
-% LaTeX Template
-% Version 1.4 (15/5/16)
-%
-% This template has been downloaded from:
-% http://www.LaTeXTemplates.com
-%
-% Original author:
-% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
-% Vel (vel@LaTeXTemplates.com)
-%
-% License:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%----------------------------------------------------------------------------------------
-
 \documentclass[twoside,twocolumn]{article}
 
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
@@ -28,7 +7,8 @@
 \linespread{1.05} % Line spacing - Palatino needs more space between lines
 \usepackage{microtype} % Slightly tweak font spacing for aesthetics
 
-\usepackage[english]{babel} % Language hyphenation and typographical rules
+\usepackage[italian]{babel} % Language hyphenation and typographical rules
+\usepackage[utf8]{inputenc}
 
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
@@ -60,19 +40,16 @@
 
 \usepackage{hyperref} % For hyperlinks in the PDF
 
-%----------------------------------------------------------------------------------------
-%	TITLE SECTION
-%----------------------------------------------------------------------------------------
-
+% Title Section
 \setlength{\droptitle}{-4\baselineskip} % Move the title up
 
 \pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 \posttitle{\end{center}} % Article title closing formatting
-\title{Article Title} % Article title
+\title{Riconoscimento della Prominenza: Reti Neurali} % Article title
 \author{%
-\textsc{John Smith}\thanks{A thank you or further information} \\[1ex] % Your name
-\normalsize University of California \\ % Your institution
-\normalsize \href{mailto:john@smith.com}{john@smith.com} % Your email address
+\textsc{Maxim Gaina}\thanks{A thank you or further information} \\[1ex] % Your name
+\normalsize Università degli Studi di Bologna \\ % Your institution
+\normalsize \href{mailto:maxim.gaina@studio.unibo.it}{maxim.gaina@studio.unibo.it}
 %\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
 %\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
 %\normalsize University of Utah \\ % Second author's institution
@@ -85,97 +62,69 @@
 \end{abstract}
 }
 
-%----------------------------------------------------------------------------------------
-
 \begin{document}
 
-% Print the title
 \maketitle
 
-%----------------------------------------------------------------------------------------
-%	ARTICLE CONTENTS
-%----------------------------------------------------------------------------------------
-
 \section{Introduction}
+	\lettrine[nindent=0em,lines=3]{L} orem ipsum dolor sit amet, consectetur adipiscing elit.
+	Text requiring further explanation\footnote{Example footnote}.
 
-\lettrine[nindent=0em,lines=3]{L} orem ipsum dolor sit amet, consectetur adipiscing elit.
-\blindtext % Dummy text
-
-\blindtext % Dummy text
-
-%------------------------------------------------
-
-\section{Methods}
-
-Maecenas sed ultricies felis. Sed imperdiet dictum arcu a egestas. 
-\begin{itemize}
-\item Donec dolor arcu, rutrum id molestie in, viverra sed diam
-\item Curabitur feugiat
-\item turpis sed auctor facilisis
-\item arcu eros accumsan lorem, at posuere mi diam sit amet tortor
-\item Fusce fermentum, mi sit amet euismod rutrum
-\item sem lorem molestie diam, iaculis aliquet sapien tortor non nisi
-\item Pellentesque bibendum pretium aliquet
-\end{itemize}
-\blindtext % Dummy text
-
-Text requiring further explanation\footnote{Example footnote}.
-
-%------------------------------------------------
+\section{Lettura}
+	\begin{itemize}
+		\item definizione formale di prominenza;
+		\item \textit{stress} e \textit{intonazione} (\textbf{pitch}, oppure \textbf{tono}) principali attori di collegamento fra prominenza e informazioni fonetico acustiche negli ennunciati;
+		\item secondo alcuni studi il \textit{profilo del pitch} (variazione della frequenza fondamentale) risulta essere il più importante indicatore, poi lunghezza e infine intensità;
+		\item teoria \textbf{pitch accent} [1958], proposta per stabilire equivalenza netta tra prominenza e fenomeni collegati all'intonazione e quindi alla configurazione assunte dalla frequenza fondamentale; però questo teoria è una presa di posizione troppo netta;
+		\item teoria \textbf{metrica} [1975], creazione di albero metrico e griglia metrica, infine creazione della strutture \textit{tune};
+		\item \textbf{isocronia} [1979], la prominenza è un fenomeno ritmico che avviene a intervalli di tempo regolari, ma lo studio viene messo in dubbio da alcuni test empirici;
+		\item \textit{tone languages} (cinese mandarino) e \textit{stress languages} (inglese), nella prima categoria il pitch determina anche il significato della parola: poi però c'è una via di mezzo che sono le \textit{pitch-accented langauges};
+		\item \textit{stress lessica} e \textit{stress frasale};
+	\end{itemize}
 
 \section{Results}
+	\begin{table}
+		\caption{Example table}
+		\centering
+		\begin{tabular}{llr}
+			\toprule
+			\multicolumn{2}{c}{Name} \\
+			\cmidrule(r){1-2}
+			First name & Last Name & Grade \\
+			\midrule
+			John & Doe & $7.5$ \\
+			Richard & Miles & $2$ \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	\begin{equation}
+		\label{eq:emc}
+		e = mc^2
+	\end{equation}
 
-\begin{table}
-\caption{Example table}
-\centering
-\begin{tabular}{llr}
-\toprule
-\multicolumn{2}{c}{Name} \\
-\cmidrule(r){1-2}
-First name & Last Name & Grade \\
-\midrule
-John & Doe & $7.5$ \\
-Richard & Miles & $2$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+\section{Concetti Base}
+	\subsection{Long Short Term Memory}
+		A statement requiring citation \cite{Figueredo:2009dg}.
+		\blindtext % Dummy text
 
-\blindtext % Dummy text
+	\subsection{Subsection Two}
+		\blindtext % Dummy text
 
-\begin{equation}
-\label{eq:emc}
-e = mc^2
-\end{equation}
-
-\blindtext % Dummy text
-
-%------------------------------------------------
-
-\section{Discussion}
-
-\subsection{Subsection One}
-
-A statement requiring citation \cite{Figueredo:2009dg}.
-\blindtext % Dummy text
-
-\subsection{Subsection Two}
-
-\blindtext % Dummy text
-
-%----------------------------------------------------------------------------------------
-%	REFERENCE LIST
-%----------------------------------------------------------------------------------------
-
-\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
-
-\bibitem[Figueredo and Wolf, 2009]{Figueredo:2009dg}
-Figueredo, A.~J. and Wolf, P. S.~A. (2009).
-\newblock Assortative pairing and life history strategy - a cross-cultural
-  study.
-\newblock {\em Human Nature}, 20:317--330.
- 
+\begin{thebibliography}{99}	
+	\bibitem{bib:fenomeni-prosodici-prominenza}
+		Fabio Tamburini,
+		\newblock \emph{Fenomeni Prosodici e Prominenza: Un Approccio Acustico},
+		2005.
+	
+	\bibitem{bib:prominence-detection-italian}
+		Fabio Tamburini, Chiara Bertini, Pier Marco Bertinetto,
+		\newblock \emph{Prosodic prominence detection in Italian continuous speech using probabilistic graphical models},
+		2014
+		
+	\bibitem{bib:prominence-by-acoustic-analyses}
+		Fabio Tamburini,
+		\newblock \emph{Automatic Detection of Prosodic Prominence by Means of Acoustic Analyses},
+		2015
 \end{thebibliography}
-
-%----------------------------------------------------------------------------------------
 
 \end{document}
