@@ -1,5 +1,11 @@
 \documentclass[twoside,twocolumn]{article}
 
+\usepackage{amsthm}
+%\newtheorem{thm}{Theorem}
+\theoremstyle{definition}
+%\newtheorem{defn}[thm]{Definition} % definition numbers are dependent on theorem numbers
+%\newtheorem{exmp}[thm]{Example}
+
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
@@ -13,6 +19,9 @@
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{graphicx}
+\usepackage{float}
 
 \usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
 
@@ -70,46 +79,115 @@
 	\lettrine[nindent=0em,lines=3]{L} orem ipsum dolor sit amet, consectetur adipiscing elit.
 	Text requiring further explanation\footnote{Example footnote}.
 
-\section{Lettura}
+\section{Corpus}
+	Nel file coi dati si ha che:
 	\begin{itemize}
-		\item definizione formale di prominenza;
-		\item \textit{stress} e \textit{intonazione} (\textbf{pitch}, oppure \textbf{tono}) principali attori di collegamento fra prominenza e informazioni fonetico acustiche negli ennunciati;
-		\item secondo alcuni studi il \textit{profilo del pitch} (variazione della frequenza fondamentale) risulta essere il più importante indicatore, poi lunghezza e infine intensità;
-		\item teoria \textbf{pitch accent} [1958], proposta per stabilire equivalenza netta tra prominenza e fenomeni collegati all'intonazione e quindi alla configurazione assunte dalla frequenza fondamentale; però questo teoria è una presa di posizione troppo netta;
-		\item teoria \textbf{metrica} [1975], creazione di albero metrico e griglia metrica, infine creazione della strutture \textit{tune};
-		\item \textbf{isocronia} [1979], la prominenza è un fenomeno ritmico che avviene a intervalli di tempo regolari, ma lo studio viene messo in dubbio da alcuni test empirici;
-		\item \textit{tone languages} (cinese mandarino) e \textit{stress languages} (inglese), nella prima categoria il pitch determina anche il significato della parola: poi però c'è una via di mezzo che sono le \textit{pitch-accented langauges};
-		\item \textit{stress lessica} e \textit{stress frasale};
+		\item i dati di ogni sillaba per ogni enunciato formano un unico blocco separato da una riga vuota;
+		\item i dati di ogni sillaba contengono 15 feature in 3 blocchi (1 blocco per la sillaba precedente, la corrente e la successiva), sono 5 feature:
+		\begin{enumerate}
+			\item durata nucleo;
+			\item spectral emphasis;
+			\item loudness;
+			\item tilt;
+			\item durata sillaba.
+		\end{enumerate}
 	\end{itemize}
+	Quindi sarà necessario scartare il primo e l'ultimo blocco (le LSTM analizzano la 
+	sequenza da sole e quindi non hanno bisogno del prima e del dopo) e mantenere per ogni sillaba solo i 5 dati centrali. L'ultima colonna (0/1) indica la prominenza o meno etichettata manualmente.
+	
+	Dovrebbero esserci 120 enunciati. Per riprodurre gli esperimenti del paper \cite{bib:prominence-detection-italian} andranno divisi in 85/train, 15/validation e 20/test, campionandoli casualmente e ripetendo la procedura di campionamento/training/valutazione risultati per 20 volte e mediando le performance finali.
 
-\section{Results}
-	\begin{table}
-		\caption{Example table}
-		\centering
-		\begin{tabular}{llr}
-			\toprule
-			\multicolumn{2}{c}{Name} \\
-			\cmidrule(r){1-2}
-			First name & Last Name & Grade \\
-			\midrule
-			John & Doe & $7.5$ \\
-			Richard & Miles & $2$ \\
-			\bottomrule
-		\end{tabular}
-	\end{table}
+\section{Lettura \cite{bib:fenomeni-prosodici-prominenza}}
+	\subsection{Rassegna termini e metodi}
+		\begin{itemize}
+			\item definizione formale di prominenza;
+			\item \textit{stress} e \textit{intonazione} (\textbf{pitch}, oppure \textbf{tono}) principali attori di collegamento fra prominenza e informazioni fonetico acustiche negli ennunciati;
+			\item secondo alcuni studi il \textit{profilo del pitch} (variazione della frequenza fondamentale) risulta essere il più importante indicatore, poi lunghezza e infine intensità;
+			\item teoria \textbf{pitch accent} [1958], proposta per stabilire equivalenza netta tra prominenza e fenomeni collegati all'intonazione e quindi alla configurazione assunte dalla frequenza fondamentale; però questo teoria è una presa di posizione troppo netta;
+			\item teoria \textbf{metrica} [1975], creazione di albero metrico e griglia metrica, infine creazione della strutture \textit{tune};
+			\item \textbf{isocronia} [1979], la prominenza è un fenomeno ritmico che avviene a intervalli di tempo regolari, ma lo studio viene messo in dubbio da alcuni test empirici;
+			\item \textit{tone languages} (cinese mandarino) e \textit{stress languages} (inglese), nella prima categoria il pitch determina anche il significato della parola: poi però c'è una via di mezzo che sono le \textit{pitch-accented langauges};
+			\item \textit{stress lessica} e \textit{stress frasale};
+			\item verranno trattate lingue stress accented (inglese, spagnolo, olandese, italiano...);
+			\item vengono individuati essenzialmente due attori principali nella definizione di prominenza:
+			\begin{itemize}
+				\item pitch accent
+				\item stress (frasale)
+			\end{itemize}
+		\end{itemize}
+	
+	\subsection{Analisi fonetico-acustica}
+		\begin{itemize}
+			\item tre misure:
+			\begin{itemize}
+				\item segmentazione ennunciato e misure di durata, lo studio si baserà su unità di tipo sillabico; è necessario identificare nuclei sillabici dato che hanno le stesse caratteristiche delle sillabe intere, ma queste ultime sono difficili da identificare nel parlato; algoritmo:
+					\begin{enumerate}
+						\item isolamento dei nuclei
+						\item identificazione dei confini dei nuclei
+						\item durata dei nuclei sillabici
+					\end{enumerate}
+				\item misure relative ai profili intonativi (\textbf{\textit{pitch}}); i suoni \textbf{sonori} sono prodotti esclusivamente dalle corde vocali e poi ci sono quelli \textbf{sordi}. La frequenza fondamentale risulta nulla durante qualli sordi quindi il profilo del pitch risulterà definito esclusivamente in corrispondenza dei suoni sonori;
+				\item misure relative all'intensità o energia;
+			\end{itemize}
+		\end{itemize}
+	
+	\subsection{Identificazione dei fenomeni prosodici}
+		\begin{itemize}
+			\item ricordiamo: per riconoscere fenomeno prosodico c'è bisogno dello stress della sillaba (fenomeno a carico del nucleo sillabico), o la presenza di un pitch accent all'interno della sillaba analizzata;
+			
+		\begin{figure*}
+			\begin{table}[H]
+				\label{my-label}
+				\begin{tabular}{l|c|c|c|c}
+					Fenomeni percettivi & \multicolumn{4}{c}{Prominenza}                                                                                                                                                               \\ \hline
+					Fenomeni prosodici  & \multicolumn{2}{c}{Stress}                                         & \multicolumn{2}{c}{Pitch accent}                                                                                       \\ 
+					Fenomeni acustici   & durata & \begin{tabular}[c]{@{}c@{}}enfasi\\ spettrale\end{tabular} & \begin{tabular}[c]{@{}c@{}}movimenti\\ in F0\end{tabular} & \begin{tabular}[c]{@{}c@{}}intensità\\ globale\end{tabular}
+				\end{tabular}
+			\end{table}
+		\end{figure*}
+		\end{itemize}
+	
+\section{Lettura \cite{bib:prominence-by-acoustic-analyses}}
+	\begin{itemize}
+		\item come è possibile definire la prominenza?
+		\item qual è il miglior dominio di promineneza in acustica? sillabi;
+		\item la prominenza è un fenomeno discreto o continuo? fenomeno continuo o multilivello;
+		\item quali sono i parametri che combinati spiegano la prominenza? 
+		\item ci sono parametri universali inter-linguistici?
+		\item meglio gli approcci rulebase o machine learning?
+		\item come possono essere valutati correttamente i sistemi di valutazione automatica?
+	\end{itemize}
+	\theoremstyle{plain}
+	\newtheorem{definition}{Definizione}
+	\begin{definition}[Prominenza]\label{def:prosodic-prominency}
+		La prominenza prosodica è un fenomeno percettivo, continuo nella sua natura, che enfatizza alcune unità linguistiche e segmentali rispettivamente al contesto che li circonda, e viene supportata da una complessa interazione fra parametri prosodici e fonetico-acustici.
+	\end{definition}
+
+	Si può dare una prima parziale formalizzazione della prominenza:
 	\begin{equation}
-		\label{eq:emc}
-		e = mc^2
+		\label{eq:prom}
+		Prom^i = FA^i + PA^i
 	\end{equation}
+	$FA$ indica l'accento di forza, mentre $PA$ il pitch accent, il tutto all'$i$-esimo segmento.
+
+\section{Lettura \cite{bib:prominence-detection-italian}}
+	Vengono spiegati i vari tipi di \texttt{PGM} e il modo in cui è stato creato il corpus. Risultati ottenuti.
 
 \section{Concetti Base}
-	\subsection{Long Short Term Memory}
-		A statement requiring citation \cite{Figueredo:2009dg}.
-		\blindtext % Dummy text
-
-	\subsection{Subsection Two}
-		\blindtext % Dummy text
-
+	\subsection{Reti Deep: LSTM}
+		Come descritto in \cite{bib:prominence-by-acoustic-analyses}, i principali vantaggi di usare metodi machine learning sono:
+		\begin{itemize}
+			\item approccio induttivo, il modello è appreso dai dati;
+			\item classificazione rapida;
+			\item rilevatori/classificatori altamente precisi.
+		\end{itemize}
+		Gli svantaggi invece consistono in:
+		\begin{itemize}
+			\item necessità di grossi corpora annotati per apprendere;
+			\item i sistemi rischiano di essere legati allo specifico corpora o alla lingua usata durante la fase di apprendimento;
+			\item i modelli prodotti sono tipicamente \textit{a scatola chiusa}, non c'è modo di estrarre informazioni linguistiche utili.
+		\end{itemize}
+		
 \begin{thebibliography}{99}	
 	\bibitem{bib:fenomeni-prosodici-prominenza}
 		Fabio Tamburini,
