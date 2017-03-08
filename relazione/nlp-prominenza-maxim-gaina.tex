@@ -1,6 +1,7 @@
 \documentclass[twoside,twocolumn]{article}
 
 \usepackage{amsthm}
+\usepackage{amssymb}
 %\newtheorem{thm}{Theorem}
 \theoremstyle{definition}
 %\newtheorem{defn}[thm]{Definition} % definition numbers are dependent on theorem numbers
@@ -67,7 +68,7 @@
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
 \begin{abstract}
-\noindent \blindtext % Dummy abstract text - replace \blindtext with your abstract text
+\noindent % Dummy abstract text - replace \blindtext with your abstract text
 \end{abstract}
 }
 
@@ -96,6 +97,25 @@
 	sequenza da sole e quindi non hanno bisogno del prima e del dopo) e mantenere per ogni sillaba solo i 5 dati centrali. L'ultima colonna (0/1) indica la prominenza o meno etichettata manualmente.
 	
 	Dovrebbero esserci 120 enunciati. Per riprodurre gli esperimenti del paper \cite{bib:prominence-detection-italian} andranno divisi in 85/train, 15/validation e 20/test, campionandoli casualmente e ripetendo la procedura di campionamento/training/valutazione risultati per 20 volte e mediando le performance finali.
+	
+\section{Costruzione LSTM}
+	È stato appreso quanto segue, cioè poco, e con molte domande.
+	\begin{itemize}
+		\item in keras va implementato un modello sequence to sequence;
+		\item in input ci va una matrice (5, 34), il padding consiste di vettori nulli di lunghezza 5;
+		\begin{itemize}
+			\item[\textbf{\checkmark}] padding fatto con Keras
+		\end{itemize}
+		\item mettiamo che abbia capito chi fa il padding
+		\begin{itemize}
+			\item[\textbf{?}] la forma dei dati va bene o serve un embedded layer?
+		\end{itemize}
+		\item a questo punto, come definisco l'architettura della rete
+		\begin{itemize}
+			\item[\textbf{?}] quanti layer ci devono essere e di che tipo?
+		\end{itemize}
+	\end{itemize}
+	Durante la costruzione, in futuro, provare a vedere come si comporta la rete in modalità \texttt{stateful = True} e al contrario.
 
 \section{Lettura \cite{bib:fenomeni-prosodici-prominenza}}
 	\subsection{Rassegna termini e metodi}
@@ -171,6 +191,12 @@
 	$FA$ indica l'accento di forza, mentre $PA$ il pitch accent, il tutto all'$i$-esimo segmento.
 
 \section{Lettura \cite{bib:prominence-detection-italian}}
+	Vengono usate le (a partire da CRF che captano solo funzioni lineari) CNF, LDCRF, e le LDCNF. Questi tipi di PGM (Probabilistic Graphical Model) sono in grado di maneggiare sequenze di input output facendo previsioni su quella di output, considerando le configurazioni d input.
+	\begin{itemize}
+		\item l'$i$-esimo nodo in input prende un vettore di features;
+		\item l'$i$-esimo nodo in output assegna un label, condizionato dai relativi vettori di features in input.
+	\end{itemize}
+
 	Vengono spiegati i vari tipi di \texttt{PGM} e il modo in cui è stato creato il corpus. Risultati ottenuti.
 
 \section{Concetti Base}
