@@ -1,4 +1,4 @@
-\documentclass[twoside,twocolumn]{article}
+\documentclass[twoside,twocolumn,11pt]{extarticle}
 
 \usepackage{textcase}
 \usepackage{amsthm}
@@ -19,7 +19,7 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
-\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage[hang,small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
 
 \usepackage{graphicx}
@@ -77,48 +77,56 @@
 
 \maketitle
 
-\section{Introduzione}
+\tableofcontents
+
+\section*{Introduzione}
 	\lettrine[nindent = 0.4em,lines=3]{O}\space\MakeTextLowercase{g}ni lingua possiede un suo insieme di tratti soprasegmentali, che caratterizzano la relativa sequenza lineare del parlato, e i vari rapporti tra foni che compongono tale sequenza. Tali informazioni prosodiche sono spesso cruciali per disambiguare espressioni sintattiche. Per capire, in breve, si prenda l'esempio riportato in \cite{bib:fenomeni-prosodici-prominenza}:
 	\begin{itemize}
 		\item[a.] \textit{È stato Luigi?}
 		\item[b.] \textit{È stato Luigi.}
 	\end{itemize}
 
-	In italiano le frasi interrogative sono un esempio di come il profilo intonativo del parlante sia fondamentale, perchè sintatticamente non sono marcate in alcun modo. Nel primo caso si ha un andamento finale ascendente, mentre nella frase dichiarativa tipicamente si tratta di un profilo finale discendente. In altri casi invece, il parlante accentua e/o allunga determinate parole, per concentrare l'attenzione dell'ascoltatore proprio in quel punto della sequenza.	 Si tratta ancora di informazioni difficilmente trasmissibili o per niente trasmissibili per vie sintattiche. I fenomeni prosidici sono quindi l'intonazione, il ritmo, la velocità di elocuzione, le pause e così via. L'oggetto di studio in questo lavoro è la \textbf{prominenza prosodica}, per la quale, più tardi, si cercherà di dare una definizione formale. Lo scopo ultimo, è quello di impiegare un particolare tipo di \textit{Reti Neurali Ricorsive} (\texttt{RNN}), cioè le \textit{Long-Short Term Memory} per l'identificazione automatica delle sillabe prominenti. Ancora meglio, si può dire che questo sia un problema di classificazione delle sillabe, prominenti e non, dove le caratteristiche di ogni sillaba dipendono dall'intero contesto in cui si trovano.
+	In italiano le frasi interrogative sono un esempio di come il profilo intonativo del parlante sia fondamentale, perchè sintatticamente non sono marcate in alcun modo. Nel primo caso si ha un andamento finale ascendente, mentre nella frase dichiarativa tipicamente si tratta di un profilo finale discendente. In altri casi invece, il parlante accentua e/o allunga determinate parole, per concentrare l'attenzione dell'ascoltatore proprio in quel punto della sequenza.	 Si tratta ancora di informazioni difficilmente trasmissibili o per niente trasmissibili per vie sintattiche. I fenomeni prosidici sono quindi l'intonazione, il ritmo, la velocità di elocuzione, le pause e così via. L'oggetto di studio in questo lavoro è la \textbf{prominenza prosodica}, per la quale, più tardi, si cercherà di dare una definizione più esatta. Lo scopo ultimo, è quello di impiegare un particolare tipo di \textit{Reti Neurali Ricorsive} (\texttt{RNN}), cioè le \textit{Long-Short Term Memory} per l'identificazione automatica delle sillabe prominenti. Ancora meglio, si può dire che questo sia un problema di classificazione delle sillabe, prominenti e non, dove le caratteristiche di ogni sillaba dipendono dall'intero contesto in cui si trovano.
 	
-	Verrà qui esposto il modo in cui è stato affrontato il problema d'esame, preceduto però dalle informazioni necessarie a capire il problema trattato e il suo contesto, cioè dove si colloca all'interno del \textit{Natural Language Processing}. La relazione avrà quindi la seguente struttura:
+	Verrà qui esposto il modo in cui è stato affrontato il problema d'esame, preceduto però dalle informazioni necessarie allo studente per capire il problema trattato e il suo contesto, cioè dove si colloca all'interno del \textit{Natural Language Processing}. La relazione avrà quindi la seguente struttura:
 	\begin{itemize}
 		\item nella prima sezione si cercherà di definire meglio il dominio del problema, restringendolo;
 		\item nella seconda sezione verranno spiegati brevemente i principi che stanno alla base delle \texttt{RNN}, e del perché risultano utili;
 		\item la terza sezione
 	\end{itemize}
 	
-	Esiste una moltitudine di approcci per individuare i fenomeni prosidici nel parlato. Restringendo la visione al solo campo del \textit{Machine Learning}, sono stati proposti in passato metodi supervisionati (vedere \cite[Capitolo 4]{bib:fenomeni-prosodici-prominenza}).
-	
-	quale fenomeno prosodico viene trattato
-	quale metodo viene adottato (machine learning)
-	
-	corpus
-	metodi di classificazione usati in passato
-	cosa voglio usare ora
-	organizzazione del paper
-
-	introduzione
-	prominenza, classificazione lingue e definizione
-	metodi di rilevamento automatico, tipi di paradigma, supervised/not, corpus
-
 \section{Prominenza Prosodica}\label{sec:prom}
-	Le lingue umane sono classificabili in diverse classi di equivalenza. Il \textit{pitch} è una particolare frequenza del suono, detto anche \textit{tono}. Nella classe di equvalenza delle \textit{lingue tonali}, le differenze nei profili del pitch sono fondamentali per distinguere i diversi significati della stessa parola. Un esempio di lingua tonale è il tailandese. D'altra parte, si hanno le \textit{stress languages}, nelle quali il tono non incide in alcun modo sui significati lessicali delle parole (l'inglese per esempio). È in questa classe che, come è stato detto prima, certe sillabe vengono \textit{stressate} in funzione comunicativa. Una via di mezzo sono le lingue \textit{pitch-accented}, dove vi sono sì degli ancoraggi lessicali dei profili intonativi, ma con opzioni di configurazione molto ridotte. Verranno prese in considerazione le \textit{stress languages}, in quanto l'italiano appartiene a questa categoria.
-
+	È stato detto che si vuole identificare automaticamente la prominenza, ma cosa significa esattamente? Non è proprio immediato dare una definizione, dal momento che gli studiosi addentratisi nel problema, arrivarono spesso a conclusioni divergenti, proponendo teorie e metodi diversi. Esaminando qualche rasségna in merito (\cite[Capitolo 1]{bib:fenomeni-prosodici-prominenza} e \cite{bib:prominence-by-acoustic-analyses}) è possibile vederlo. Talvolta i ricercatori vanno letteralmente in conflitto ridefinendo lo stesso termine, come per esempio lo \textit{stress}. Riprendendo però quanto detto in \cite{bib:prominence-by-acoustic-analyses}, si può così definire la prominenza:
 	\theoremstyle{plain}
 	\newtheorem{definition}{Definizione}
 	\begin{definition}[Prominenza Prosodica]\label{def:prosodic-prominency}
 		La prominenza prosodica è un fenomeno percettivo, continuo nella sua natura, che enfatizza alcune unità linguistiche e segmentali rispettivamente al contesto che li circonda, e viene supportata da una complessa interazione fra parametri prosodici e fonetico-acustici.
 	\end{definition}
+	Da notare come la definizione fa riferimento a unità linguistiche segmentali all'interno dell'enunciato e, che queste siano dipendenti da altre unità linguistiche, che formano il contesto in cui si trovano. Questo sarà decisivo nel definire poi il metodo di risoluzione del problema. I parametri a cui si fa riferimento sono anche essi sempre stati oggetto di discussione. Uno degli obiettivi più importanti è sempre stato trovare un fenomeno linguistico/prosodico misurabile per supportare la percezione della prominenza. Fra tutti, e come suggerito in \cite{bib:prominence-by-acoustic-analyses}, si riporta come esempio lo studio di [KOHLER], che individua due impportanti attori al supporto della prominenza: il primo è il \textit{pitch accent} e riguarda il profilo della frequenza fondamentale; il secondo è il \textit{force accent}, più connesso a fenomeni acustici come intensità, durata del segmento e probabilmente altro. Il grado di prominenza dell'$i$-esimo segmento si può vedere come la somma di questi due parametri.
+	
+	Ci si potrebbe ora chiedere se la prominenza di un segmento si può stabilire con un \textit{sì/no}, su una scala ordinale oppure su una scala continua. La prominenza per sua natura è un fenomeno continuo, ma la sua discretizzazione può comunque essere attuata, dipende dall'approccio che si adotta per risolvere il problema.
+	
+	Un'altra domanda che sorge, è se lo studio della prominenza esige che vengano fatte delle distinzioni interlinguistiche. La risposta è sì, in quanto si può rilevare la presenza delle così dette \textit{tone languages}, in cui il profilo del pitch è correlato al significato stesso della parola pronunciata (il tailandese). Una versione più rilassata di questo principio è, per esempio, il giapponese, dove questo ancoraggio fra prominenza e semantica è molto più limitato, e le sillabe prominenti non portano con sé un allungamento o una profondità maggiore, ma semplicemente un profilo di pitch alto. Infine troviamo le \textit{stress languages}, nelle quali il tono non incide in alcun modo sui significati lessicali delle parole (inglese), ma le sillabe vengono \textit{stressate} in funzione comunicativa. Questo discorso è stato approfodito ulteriormente, negli studi come quello di ([JUN]) che classifica le lingue in funzione di due dimensioni: prominenza e pattern ritmico. La prima dimensione è importante da considerare, mentre la seconda interessa poco in questa sede.
 
-\section{Reti Neurali Ricorsive}\label{sec:rnn}
-
+\section{Riconoscimento Automatico della Prominenza}
+	Una volta definito e indagato il fenomeno della prominenza prosodica, è ora di chiedersi in che modo possa essere affrontato il problema del suo riconoscimento automatico. Si possono impiegare modelli computazionali che seguono due paradigmi diversi:
+	\begin{enumerate}
+		\item \textit{Rule Based}, consiste nel fornire regole formali per la risoluzione di un dato problema;
+		\item \textit{Machine Learning}, viene retto un modello computazionale a partire da dati già esistenti, in questo caso da corpus annotati da esperti. 
+	\end{enumerate}
+	Riprendendo il comodo schema proposto in \cite{bib:prominence-by-acoustic-analyses}, si può dire che per quanto riguarda i sistemi rule-based, i principali vantaggi consistono nel permettere a chi si occupa di linguistica di controllare pienamente il comportamento degli algoritmi; di creare modelli che operano su diverse lingue; non richiedono grossi corpora annotati, e permettono di epsrimere il modello in termini linguistici. Solitamente però producono sistemi meno accurati. Si escludono tuttavia i sistemi rule-based in questo contesto, e ci si concentra sui metodi di apprendimento automatico. Questi ultimi permettono di avere sistemi altamente performanti; permettono una più veloce classificazione e apprendono a partire dai dati. L'ultimo aspetto elencato è anche un punto dolente in \texttt{NLP}, sono infatti necessari grossi corpora annotati che non sempre si hanno a disposizione. La creazione di corpora può richiedere enormi sforzi umani ed economici. Si noti che in ambito \textit{Machine Learning} (\texttt{ML}) esistono metodi di apprendimento supervisionati e metodi apprendimento non supervisionati, e la necessità di avere queste risorse annotate è presente nei sistemi supervisionati. In \cite[Sezione 4.2]{bib:fenomeni-prosodici-prominenza} è stato proposto un metodo non supervisionato, che, data la segmentazione dell'enunciato, fa uso di una funzione di prominenza per fissarla su una scala continua. L'obiettivo di sistemi del genere è quello di liberare dalla necessità di avere larghi corpus annotati. In questo lavoro si cercherà di costruire tuttavia, un sistema supervisionato con diverse fasi di apprendimento. 
+	
+	Per quanto riguarda la segmentazione degli enunciati, il problema è simile. Se il corpus è creato da risorse umane si possono usare le segmentazioni eseguite a mano. Negli ambienti più realistici però, queste informazioni non si hanno a disposizione. Anche in merito sono stati fatti degli studi per identificare automaticamente delle pseudo sillabe e i relativi nuclei.
+	
 \section{Corpus}\label{sec:corpus}
+	domanda c continuità o discreto (può essere cont e disc... ma noi siamo fighi e facciam 0/1)
+
+	metodi di rilevamento automatico, tipi di paradigma, supervised/not, corpus
+	
+\section{Reti Neurali Ricorsive}\label{sec:rnn}
+	1. spiegazione formale metriche
+	2. quali risultati sono stati raggiunti su questo corpus
+	Esiste una moltitudine di approcci per individuare i fenomeni prosidici nel parlato. Restringendo la visione al solo campo del \textit{Machine Learning}, sono stati proposti in passato metodi supervisionati (vedere \cite[Capitolo 4]{bib:fenomeni-prosodici-prominenza}).
 
 \section{Costruzione della \texttt{RNN}}\label{sec:building}
 
