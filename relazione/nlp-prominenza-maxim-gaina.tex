@@ -108,24 +108,85 @@
 	
 	Un'altra domanda che sorge, è se lo studio della prominenza esige che vengano fatte delle distinzioni interlinguistiche. La risposta è sì, in quanto si può rilevare la presenza delle così dette \textit{tone languages}, in cui il profilo del pitch è correlato al significato stesso della parola pronunciata (il tailandese). Una versione più rilassata di questo principio è, per esempio, il giapponese, dove questo ancoraggio fra prominenza e semantica è molto più limitato, e le sillabe prominenti non portano con sé un allungamento o una profondità maggiore, ma semplicemente un profilo di pitch alto. Infine troviamo le \textit{stress languages}, nelle quali il tono non incide in alcun modo sui significati lessicali delle parole (inglese), ma le sillabe vengono \textit{stressate} in funzione comunicativa. Questo discorso è stato approfodito ulteriormente, negli studi come quello di ([JUN]) che classifica le lingue in funzione di due dimensioni: prominenza e pattern ritmico. La prima dimensione è importante da considerare, mentre la seconda interessa poco in questa sede.
 
-\section{Riconoscimento Automatico della Prominenza}
+\section{Riconoscimento Automatico della Prominenza}\label{sec:ric}
 	Una volta definito e indagato il fenomeno della prominenza prosodica, è ora di chiedersi in che modo possa essere affrontato il problema del suo riconoscimento automatico. Si possono impiegare modelli computazionali che seguono due paradigmi diversi:
 	\begin{enumerate}
 		\item \textit{Rule Based}, consiste nel fornire regole formali per la risoluzione di un dato problema;
 		\item \textit{Machine Learning}, viene retto un modello computazionale a partire da dati già esistenti, in questo caso da corpus annotati da esperti. 
 	\end{enumerate}
-	Riprendendo il comodo schema proposto in \cite{bib:prominence-by-acoustic-analyses}, si può dire che per quanto riguarda i sistemi rule-based, i principali vantaggi consistono nel permettere a chi si occupa di linguistica di controllare pienamente il comportamento degli algoritmi; di creare modelli che operano su diverse lingue; non richiedono grossi corpora annotati, e permettono di epsrimere il modello in termini linguistici. Solitamente però producono sistemi meno accurati. Si escludono tuttavia i sistemi rule-based in questo contesto, e ci si concentra sui metodi di apprendimento automatico. Questi ultimi permettono di avere sistemi altamente performanti; permettono una più veloce classificazione e apprendono a partire dai dati. L'ultimo aspetto elencato è anche un punto dolente in \texttt{NLP}, sono infatti necessari grossi corpora annotati che non sempre si hanno a disposizione. La creazione di corpora può richiedere enormi sforzi umani ed economici. Si noti che in ambito \textit{Machine Learning} (\texttt{ML}) esistono metodi di apprendimento supervisionati e metodi apprendimento non supervisionati, e la necessità di avere queste risorse annotate è presente nei sistemi supervisionati. In \cite[Sezione 4.2]{bib:fenomeni-prosodici-prominenza} è stato proposto un metodo non supervisionato, che, data la segmentazione dell'enunciato, fa uso di una funzione di prominenza per fissarla su una scala continua. L'obiettivo di sistemi del genere è quello di liberare dalla necessità di avere larghi corpus annotati. In questo lavoro si cercherà di costruire tuttavia, un sistema supervisionato con diverse fasi di apprendimento. 
+	Riprendendo il comodo schema proposto in \cite{bib:prominence-by-acoustic-analyses}, si può dire che per quanto riguarda i sistemi rule-based, i principali vantaggi consistono nel permettere a chi si occupa di linguistica di controllare pienamente il comportamento degli algoritmi; di creare modelli che operano su diverse lingue; non richiedono grossi corpora annotati, e permettono di epsrimere il modello in termini linguistici. Solitamente però producono sistemi meno accurati. Si escludono tuttavia i sistemi rule-based in questo contesto, e ci si concentra sui metodi di apprendimento automatico. Questi ultimi permettono di avere sistemi altamente performanti; permettono una più veloce classificazione e apprendono a partire dai dati. L'ultimo aspetto elencato è anche un punto dolente in \texttt{NLP}, sono infatti necessari grossi corpora annotati che non sempre si hanno a disposizione. La creazione di corpora può richiedere enormi sforzi umani ed economici, in più gli annotatori umani non sono mai al $100\%$ concordi sulla parte prominente delle frasi. Si noti che in ambito \textit{Machine Learning} (\texttt{ML}) esistono metodi di apprendimento supervisionati e metodi apprendimento non supervisionati, e la necessità di avere queste risorse annotate è presente nei sistemi supervisionati. In \cite[Sezione 4.2]{bib:fenomeni-prosodici-prominenza} è stato proposto un metodo non supervisionato, che, data la segmentazione dell'enunciato, fa uso di una funzione di prominenza per fissarla su una scala continua. L'obiettivo di sistemi del genere è quello di liberare dalla necessità di avere larghi corpus annotati. In questo lavoro si cercherà di costruire tuttavia, un sistema supervisionato con diverse fasi di apprendimento. 
 	
 	Per quanto riguarda la segmentazione degli enunciati, il problema è simile. Se il corpus è creato da risorse umane si possono usare le segmentazioni eseguite a mano. Negli ambienti più realistici però, queste informazioni non si hanno a disposizione. Anche in merito sono stati fatti degli studi per identificare automaticamente delle pseudo sillabe e i relativi nuclei.
 	
-\section{Corpus}\label{sec:corpus}
-	domanda c continuità o discreto (può essere cont e disc... ma noi siamo fighi e facciam 0/1)
-
-	metodi di rilevamento automatico, tipi di paradigma, supervised/not, corpus
+	\subsection{Metriche di valutazione}
+		Si intende in questa relazione riportare i risultati di sperimentazioni già fatte e confrontarli con il lavoro qui svolto, per questo è necessario usare delle metriche ben precise. Tali metriche sono tipiche dell'ambito \texttt{ML}, e l'importanza di ognuna di loro varia a seconda del tipo di problema e quindi dei modelli usati. Verranno ora viste quelle fondamentali per affrontare il problema posto.
+		
+		Dato un insieme di sillabe, siano i seguenti totali calcolati:
+		\begin{itemize}
+			\item[$a$:] corrette previsioni di non prominenza;
+			\item[$b$:] scorrette previsioni di prominenza;
+			\item[$c$:] scorrette previsioni di non prominenza;
+			\item[$d$:] corrette previsioni della prominenza.
+		\end{itemize}
+		In altre parole sarebbero, rispettivamente, le sillabe scartete correttamente; i falsi allarmi; le mancate individuazioni e le corrette individuazioni della prominenza. A partire da questi parametri si può già definire l'\textbf{accuratezza} $AC$, che esprime la percentuale di corrette classificazioni rispetto al totale numero delle sillabe:
+		\begin{equation}\label{eq:ac}
+			AC = (a + d) / (a + b + c + d)
+		\end{equation}
+		La metrica \textbf{recupero} $R$ invece, abbondantemente usata anche nell'ambito dell'\textit{Information Retrieval} (per esprimere la percentuale di documenti utili trovati sul totale di quelli rilevanti), rappresenta qui la percentuale di sillabe prominenti correttamente identificate, ovvero:
+		\begin{equation}\label{eq:r}
+			R = d / (c + d)
+		\end{equation}
+		La \textbf{precisione} $P$ è la percentuale di corrette classificazioni di sillabe prominenti:
+		\begin{equation}\label{eq:p}
+			P = d / (b + d)
+		\end{equation}
+		Quando gli elementi da classificare sono distribuiti in modo sbilanciato, la metrica $AC$ può non essere il miglior indicatore delle prestazioni del modello. Si vedrà infatti, anche se è intuibile, che le sillabe prominenti sono una minoranza. Siamo anche di fronte a una situazione in cui, per esempio, il richiamo $R$ come metrica non è strettamente più importante della precisione. Per valutare le prestazioni di un sistema, si ricorre quindi a una metrica combinata che tiene conto di entrambe, che può essere l'\textbf{F-Score} così definito:
+		\begin{equation}\label{eq:f}
+			F1 = 2 \cdot \frac{P \cdot R}{P + R}
+		\end{equation}
+		Viene chiamata $F1$ perché si tratta del caso specifico in cui nella formula generalizzata dell'\textit{F-score} $\beta$ viene impostato a $1$, così che precisione e richiamo abbiano lo stesso peso.
+	
+\section{Il Corpus Annotato}\label{sec:corpus}
+	Per raggiungere l'obiettivo verrà usato lo stesso corpus dell'eperiménto \cite{bib:prominence-detection-italian}, che ora si andrà ad analizzare per avere un'adeguata comprensione.
+	
+	\subsection{L'esperimento orignario}
+		Esiste un'altra famiglia di sistemi \texttt{ML}, le \textit{Probabilistic Graphical Models} (\texttt{PGM}). Esse sono in grado di processare sequenze di dati in input facendo previsioni su quelle in output, considerando sia la sequenza di input attuale che quella di output precedente. Data quindi una generica sequenza di vettori $\{v^x_1, ..., v^x_n\}$ in input, contenenti le features, e data la sequenza $\{y_1, ..., y_n\}$ in output, i modelli di tipo \texttt{PGM} etichettano ogni $y_i$ nel modo più probabilmente opprtuno. Le \texttt{PGM} però sono un insieme di convinzioni per strutturare i modelli, e più tipi di \texttt{PGM} sono state usate in \cite{bib:prominence-detection-italian} per il riconoscimento automatico della prominenza.
+	
+		Il corpus è stato costruito a partire da conversazioni di persone italiane provenienti dall'area di Pisa, sia femmine che maschi. Il corpus contiene un totale di $120$ espressioni segmentate, con una lunghezza media di $18$ sillabe che vanno da un minimo di $9$ a un massimo di $35$. Ai partecipanti fu chiesto poi di individuare quali fosse secondo loro le prominenze negli enunciati, presentando loro le segmentazioni. L'intero procedimento, in realtà più complesso, è descritto nel documento originale. Le sillabe sono state poi raggruppate in base alla percentuale di convergenza di etichettature da parte di tutti. Questi significa che, dato che ogni sillaba è stata valutata da $10$ persone, essa può essere giudicata prominente da più di $6$, $7$, $8$ o $9$ persone. Infine, sono state selezionate le sillabe convergenti nell'$80\%$ dei casi come prominenti, che sono il $23,56\%$ del totale. È stato fatto poi un'altro tipo di selezione, in cui il peso più importante veniva considerato il livello di affidabilità dei giudici. In questo caso risultavano prominenti il $33,46\%$ delle sillabe nel corpus.
+		
+	\subsection{Le features}
+		Ogni sillaba all'interno dell'espressione ha un determinato numero di caratteristiche. Come è stato già accennato, ci saranno principalmente due attori a determinare le features: pitch-accent e force-accent. Senza andare troppo nel dettaglio, le caratteristiche di ogni sillabe sono le seguenti:
+		\begin{enumerate}
+			\item \textbf{durata nucelo}, normalizzata rispetto alla media e alla varianza del nucleo all'interno dell'espressione;
+			\item \textbf{spectral emphasis}, feature anch'essa normalizzta con \texttt{z-score};
+			\item \textbf{movimenti del pitch}, feature calcolata a partire da parametri forniti dal modello \texttt{TILT} e con l'ausilio di specifici algoritmi per individuare il picco;
+			\item \textbf{intensità complessiva};
+			\item \textbf{durata sillaba}, valore ricavato come per la durata del nucleo, ma riguardante l'intera sillaba.
+		\end{enumerate}
+		A parte la durata della sillaba, tutte le features sono calcolate nel dominio del nucleo della sillaba.
+		
+	\subsection{Risultati}
+		Per le \texttt{PGM} è stato usato un training set di $100$ espressioni mentre il test set ne conteneva $20$. La Tabella \ref{tab:pgm} riporta le prestazioni raggiunte, senza (ricordiamo) l'utilizzo di alcuna caratteristica linguistica, solo tramite informazioni acustiche.
+		\begin{table}[ht!]
+			\centering
+			\caption{Il migliore sistema \texttt{PGM} (\textit{Latent-Dynamic Conditional Neural Fields}) al variare del metodo di selezione delle sillabe prominenti.}
+			\label{tab:pgm}
+			\begin{tabular}{lllll}
+				\hline
+				& \multicolumn{1}{c}{AC} & \multicolumn{1}{c}{P} & \multicolumn{1}{c}{R} & \multicolumn{1}{c}{F1} \\ \hline
+				Conv. 80\% & \textbf{0.875}         & 0.788                 & 0.658                 & 0.716                  \\
+				Best-3     & 0.855                  & \textbf{0.831}        & \textbf{0.718}        & \textbf{0.770}         \\ \hline
+			\end{tabular}
+		\end{table}
+	
+		I risultati ottenuti non possono essere comparati con altri studi nel settore, dato che sarebbe necessario avere lo stesso corpus.
 	
 \section{Reti Neurali Ricorsive}\label{sec:rnn}
+prima si doveva mostrare che ldcnf > svm, ora che rnn > ldcnf
 	1. spiegazione formale metriche
+	
 	2. quali risultati sono stati raggiunti su questo corpus
+	
 	Esiste una moltitudine di approcci per individuare i fenomeni prosidici nel parlato. Restringendo la visione al solo campo del \textit{Machine Learning}, sono stati proposti in passato metodi supervisionati (vedere \cite[Capitolo 4]{bib:fenomeni-prosodici-prominenza}).
 
 \section{Costruzione della \texttt{RNN}}\label{sec:building}
