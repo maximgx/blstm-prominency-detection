@@ -12,6 +12,7 @@ from keras.layers.recurrent import LSTM
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 from keras import backend as K
+from random import shuffle
 
 import pandas
 import numpy
@@ -29,16 +30,20 @@ COLUMNS = ['nucleus-duration',
             'syllable-duration',
             'prominent-syllable']
 
+LEARNING_PHASES = 20
+
+#TRAINSET_LEGTH = 85; VALIDATIONSET_LENGHT = 15; TESTSET_LENGTH = 19
+TRAIN_INDEXES = numpy.arange(85)
+VALIDATION_INDEXES = numpy.arange(85, 100)
+TESTSET_INDEXES = numpy.arange(100, 119)
 
 dataFrame = pandas.read_csv(PATH, delim_whitespace = True,
                             header = None,
                             names = COLUMNS,
                             skip_blank_lines = False)
 
-x_dataset = []
-y_dataset = []
-x_utterance = []
-y_utterance = []
+x_dataset = []; y_dataset = []
+x_utterance = []; y_utterance = []
 
 prominent_syllable = [0., 1., 0.]
 not_prominent_syllable = [1., 0., 0.]
@@ -76,7 +81,10 @@ for index, row in dataFrame.iterrows():
 
 total_expressions = len(y_dataset)
 
-print ("... extracted ", total_expressions, "utterances.")
+print ("... extracted ", total_expressions, "utterances. Dataset split:")
+print ("\tTraining set", len(TRAIN_INDEXES), "expressions")
+print ("\tValidation set", len(VALIDATION_INDEXES), "expressions")
+print ("\tTest set", len(TESTSET_INDEXES), "expressions")
 print ("\nLongest expression composed by", max_utterance_length, "syllables.")
 
 print ("Filling shorter expressions with zeroes...")
@@ -96,6 +104,66 @@ y_dataset = sequence.pad_sequences(y_dataset,
 x_dataset = numpy.asarray(x_dataset)
 y_dataset = numpy.asarray(y_dataset)
 
+
+indexes = numpy.arange(total_expressions)
+scores = []
+
+numpy.set_printoptions(threshold = sys.maxsize)
+
+for learning_phase in range(LEARNING_PHASES):
+    numpy.random.shuffle(indexes)
+    x_dataset = x_dataset[indexes]
+    y_dataset = y_dataset[indexes]
+
+    print ("Dataset shuffled")
+
+    # Building Model
+    model = Sequential()
+    # 17 memory cells seems to be the best choice
+    model.add(Bidirectional(LSTM(17, return_sequences = True),
+                            input_shape = (max_utterance_length, len(COLUMNS) - 1)))
+    model.add(Dropout(0.5))
+    # Gives a sequence of triples (one triple per each syllable) where each element
+    # represents the probability of being prominent, non prominent and missing at all.
+    # Indeed, all utterances must have the same length and some of them where
+    # padded with vectors of zeroes.
+    model.add(TimeDistributed(Dense(len(prominent_syllable), activation = 'softmax')))
+
+    model.compile(loss = 'binary_crossentropy',
+                    optimizer = 'adam',
+                    metrics = ['accuracy', 'fmeasure', 'precision', 'recall'])
+    print (model.summary())
+
+    # No known nb_epoch and batch_size gives better metrics than this
+    model.fit(x_dataset[TRAIN_INDEXES], y_dataset[TRAIN_INDEXES],
+                validation_data = (x_dataset[VALIDATION_INDEXES], y_dataset[VALIDATION_INDEXES]),
+                nb_epoch = 50, batch_size = 2)
+
+    metrics = model.evaluate(x_dataset[TESTSET_INDEXES],
+                            y_dataset[TESTSET_INDEXES],
+                            verbose = 1)
+
+    print ("Learning phase", learning_phase + 1, "scores:")
+    print ("\tAccuracy %.2f%%" % (metrics[1] * 100))
+    print ("\tPrecision %.2f%%" % (metrics[3] * 100))
+    print ("\tRecall %.2f%%" % (metrics[4] * 100))
+    print ("\tF1: %.2f%%" % (metrics[2] * 100))
+
+    scores.append(metrics)
+
+    del model
+
+overall_scores = numpy.mean(scores, axis = 0)
+print ("Overall scores:")
+print ("\tAccuracy %.2f%%" % (overall_scores[1] * 100))
+print ("\tPrecision %.2f%%" % (overall_scores[3] * 100))
+print ("\tRecall %.2f%%" % (overall_scores[4] * 100))
+print ("\tF1: %.2f%%" % (overall_scores[2] * 100))
+
 numpy.set_printoptions(threshold = sys.maxsize)
 print (x_dataset[0])
 print (y_dataset[0])
+
+model_filename = 'blstm-prominence.h5'
+print ("Saving model to file...", model_filename)
+model.save(model_filename)
