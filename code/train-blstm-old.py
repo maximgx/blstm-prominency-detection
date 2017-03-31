@@ -149,9 +149,9 @@ print ("F1: %.2f%%" % (scores[2]*100))
 print ("Precision: %.2f%%" % (scores[3]*100))
 print ("Recall: %.2f%%" % (scores[4]*100))
 
-model_filename = 'blstm-prominence.h5'
-print ("Saving model to file...", model_filename)
-model.save(model_filename)
+# model_filename = 'blstm-prominence.h5'
+# print ("Saving model to file...", model_filename)
+# model.save(model_filename)
 
 ''' See intermediate layer output '''
 # get_layer_output = K.function([model.layers[0].input, K.learning_phase()],

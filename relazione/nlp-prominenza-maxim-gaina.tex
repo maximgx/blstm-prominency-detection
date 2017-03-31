@@ -103,7 +103,7 @@
 		La prominenza prosodica è un fenomeno percettivo, continuo nella sua natura, che enfatizza alcune unità linguistiche e segmentali rispettivamente al contesto che li circonda, e viene supportata da una complessa interazione fra parametri prosodici e fonetico-acustici.
 	\end{definition}
 	Da notare come la definizione fa riferimento a unità linguistiche segmentali all'interno dell'enunciato e, che queste siano dipendenti da altre unità linguistiche, che formano il contesto in cui si trovano. Questo sarà decisivo nel definire poi il metodo di risoluzione del problema. I parametri a cui si fa riferimento sono anche essi sempre stati oggetto di discussione. Uno degli obiettivi più importanti è sempre stato trovare un fenomeno linguistico/prosodico misurabile per supportare la percezione della prominenza. Fra tutti, e come suggerito in \cite{bib:prominence-by-acoustic-analyses}, si riporta come esempio lo studio di [KOHLER], che individua due impportanti attori al supporto della prominenza: il primo è il \textit{pitch accent} e riguarda il profilo della frequenza fondamentale; il secondo è il \textit{force accent}, più connesso a fenomeni acustici come intensità, durata del segmento e probabilmente altro. Il grado di prominenza dell'$i$-esimo segmento si può vedere come la somma di questi due parametri.
-	
+
 	Ci si potrebbe ora chiedere se la prominenza di un segmento si può stabilire con un \textit{sì/no}, su una scala ordinale oppure su una scala continua. La prominenza per sua natura è un fenomeno continuo, ma la sua discretizzazione può comunque essere attuata, dipende dall'approccio che si adotta per risolvere il problema.
 	
 	Un'altra domanda che sorge, è se lo studio della prominenza esige che vengano fatte delle distinzioni interlinguistiche. La risposta è sì, in quanto si può rilevare la presenza delle così dette \textit{tone languages}, in cui il profilo del pitch è correlato al significato stesso della parola pronunciata (il tailandese). Una versione più rilassata di questo principio è, per esempio, il giapponese, dove questo ancoraggio fra prominenza e semantica è molto più limitato, e le sillabe prominenti non portano con sé un allungamento o una profondità maggiore, ma semplicemente un profilo di pitch alto. Infine troviamo le \textit{stress languages}, nelle quali il tono non incide in alcun modo sui significati lessicali delle parole (inglese), ma le sillabe vengono \textit{stressate} in funzione comunicativa. Questo discorso è stato approfodito ulteriormente, negli studi come quello di ([JUN]) che classifica le lingue in funzione di due dimensioni: prominenza e pattern ritmico. La prima dimensione è importante da considerare, mentre la seconda interessa poco in questa sede.
@@ -163,40 +163,109 @@
 			\item \textbf{intensità complessiva};
 			\item \textbf{durata sillaba}, valore ricavato come per la durata del nucleo, ma riguardante l'intera sillaba.
 		\end{enumerate}
-		A parte la durata della sillaba, tutte le features sono calcolate nel dominio del nucleo della sillaba.
+		A parte la durata della sillaba, tutte le features sono calcolate nel dominio del nucleo della sillaba. La comprensione di come queste caratteristiche si inseriscano nel quadro dello studio (durata della sillaba a parte), viene facilitata dalla gerarchia dei fenomeni proposta nel \cite[Capitolo 3]{bib:fenomeni-prosodici-prominenza}, e riproposta nella Tabella \ref{tab:gerarchia}. Il fenomeno percettivo della prominenza è basato sui fenomeni prosodici dello \textit{stress}	e il \textit{pitch accent}, a loro volta correlati a fenomeni acustici ricavabili da parametri fisici dell'enunciato. Inoltre, ogni fenomeno prosodico è sufficiente per individuare il fenomeno della prominenza, singolarmente o in presenza dell'altro.
+		\begin{table*}[th]
+			\centering
+			\label{tab:gerarchia}
+			\caption{Gerarchia dei fenomeni coinvolti nel riconoscimento automatico della Prominenza}
+			\begin{tabular}{l|c|c|c|c}
+				\hline
+				Fenomeni percettivi & \multicolumn{4}{c}{Prominenza}                                                                                                                                                               \\ \hline
+				Fenomeni prosodici  & \multicolumn{2}{c}{Stress}                                         & \multicolumn{2}{c}{Pitch accent}                                                                                       \\ \hline
+				Fenomeni acustici   & durata & \begin{tabular}[c]{@{}c@{}}enfasi\\ spettrale\end{tabular} & \begin{tabular}[c]{@{}c@{}}movimenti\\ in F0\end{tabular} & \begin{tabular}[c]{@{}c@{}}intensità\\ globale\end{tabular} \\ \hline
+			\end{tabular}
+		\end{table*}
 		
 	\subsection{Risultati}
 		Per le \texttt{PGM} è stato usato un training set di $100$ espressioni mentre il test set ne conteneva $20$. La Tabella \ref{tab:pgm} riporta le prestazioni raggiunte, senza (ricordiamo) l'utilizzo di alcuna caratteristica linguistica, solo tramite informazioni acustiche.
-		\begin{table}[ht!]
+		\begin{table*}[ht!]
 			\centering
 			\caption{Il migliore sistema \texttt{PGM} (\textit{Latent-Dynamic Conditional Neural Fields}) al variare del metodo di selezione delle sillabe prominenti.}
 			\label{tab:pgm}
-			\begin{tabular}{lllll}
+			\begin{tabular}{lrrrr}
 				\hline
-				& \multicolumn{1}{c}{AC} & \multicolumn{1}{c}{P} & \multicolumn{1}{c}{R} & \multicolumn{1}{c}{F1} \\ \hline
-				Conv. 80\% & \textbf{0.875}         & 0.788                 & 0.658                 & 0.716                  \\
-				Best-3     & 0.855                  & \textbf{0.831}        & \textbf{0.718}        & \textbf{0.770}         \\ \hline
+				& \multicolumn{1}{c}{Accuratezza AC} & \multicolumn{1}{c}{Precisione P} & \multicolumn{1}{c}{Richiamo R} & \multicolumn{1}{c}{F-score F1} \\ \hline
+				Convergenza 80\% & \textbf{0.875} & 0.788 & 0.658 & 0.716 \\
+				Best-3 & 0.855 & \textbf{0.831} & \textbf{0.718} & \textbf{0.770} \\ \hline
 			\end{tabular}
-		\end{table}
+		\end{table*}
 	
 		I risultati ottenuti non possono essere comparati con altri studi nel settore, dato che sarebbe necessario avere lo stesso corpus.
+		
+		In \cite{bib:prominence-detection-italian} è stato anche fatto vedere quanto le \texttt{PGM}, e in particolare le \texttt{LDCNF}, siano meglio in confronto alle \textit{Support Vector Machines} (\texttt{SVM}). L'\textit{F-measure} infatti migliora di mezzo punto, da $0.665$ a $0.716$ per il criterio della convergenza, e di $0.38$ punti per il criterio \textit{best-3}. Si cercherà di fare un confronto simile usando le reti neurali ricorsive, andando a vedere che miglioramento sono in grado di apportare alla causa.
 	
 \section{Reti Neurali Ricorsive}\label{sec:rnn}
-prima si doveva mostrare che ldcnf > svm, ora che rnn > ldcnf
-	1. spiegazione formale metriche
+	La Definizione \ref{def:prosodic-prominency} della prominenza prosodica classifica tale fenomeno come continuo e marcato rispettivamente al contensto che lo circonda. Questo significa che le tradizionali reti neurali non possono affrontare un problema del genere, non è chiaro infatti come possano analizzare per esempio, il significato di una parola quando esso dipende da quanto è stato precedentemente detto.
 	
-	2. quali risultati sono stati raggiunti su questo corpus
+	Le \textit{Reti Neurali Ricorsive} (\texttt{RNN}) sembrano ovviare a questo problema. Le \texttt{RNN} sono un tipo di rete contenente al loro interno dei cicli, ciò rende possibile che le stesse informazioni persistano al loro interno\footnote{\url{http://colah.github.io/posts/2015-08-Understanding-LSTMs/}}.
+	\begin{figure*}[h]
+		\centering
+		\includegraphics[scale=.4]{img/rnn.png}
+		\caption{\textit{Unrolling} di una rete neurale ricorsiva}
+		\label{fig:unroll}
+	\end{figure*}
+	Nella Figura \ref{fig:unroll} si può vedere come, preso un ciclo, una \texttt{RNN} si può interpretare come una successione di copie della stessa rete. La loro struttura \textit{a catena} si adatta perfettamente al processamento di sequenze e liste. L'interpretazione è la seguente: data un porzione di rete $A$, essa guarda l'input $x_t$ e produce l'output $h_t$, permettendo tramite il loop di passare l'informazione dal passo $t$ a $t + 1$. Una \texttt{RNN} può quindi guardare dietro nel tempo, individuare una dipendenza fra passato e presente e quindi produrre l'output più opportuno. La domanda ora è la seguente: \textit{quanto} indietro nel tempo? Sfortunatamente, le \texttt{RNN} perdono efficacia man mano che la distanza tra passato interessante e presente aumenta.
 	
-	Esiste una moltitudine di approcci per individuare i fenomeni prosidici nel parlato. Restringendo la visione al solo campo del \textit{Machine Learning}, sono stati proposti in passato metodi supervisionati (vedere \cite[Capitolo 4]{bib:fenomeni-prosodici-prominenza}).
+	\subsection{Long Short Term Memory}
+		Le \textit{Long Short Term Memory} (\texttt{LSTM}) sono un particolare tipo di \texttt{RNN} capaci di apprendere dipendenze a lungo termine. Infatti, le \texttt{LSTM} sono state proposte proprio per ovviare al problema delle \texttt{RNN} precedentemente descritto. I moduli, in questo tipo di architettura (Figura \ref{fig:lstm}), racchiudono al loro interno più layer con funzione di attivazione \texttt{sigmoid} e \texttt{tanh} che interagiscono fra loro in maniera ben specifica.
+		
+		\begin{figure*}[h]
+			\centering
+			\includegraphics[scale=.5]{img/lstm.png}
+			\caption{Esempio di struttura interna alla base delle \textit{Long Short Term Memory (\texttt{LSTM})}}
+			\label{fig:lstm}
+		\end{figure*}
 	
-	Overall scores:
-	Accuracy 91.39%
-	Precision 87.11%
-	Recall 87.04%
-	F1: 87.07%
-	
+		L'idea alla base è che la \texttt{LSTM} può rimuovere o aggiungere informazioni allo stato della sua cella. Tali scelte vengono influenzate da strutture chiamate \textit{porta} (o \textit{gate}). Una porta fa passare l'informazione nello stato della cella in maniera ottimale, dato che la porta stessa non è altro che uno strato di rete neurale con funzione di attivazione sigmoidea (cella $\sigma$ in Figura \ref{fig:lstm}). Si ricordi che il range di $\sigma$ è compreso fra $0$ (\textit{non far entrare nulla}) e $1$ (\textit{fai entrare tutto}). Seguono ora brevemente i passi che ci sono dietro al funzionamento di una \texttt{LSTM}.
+		
+		\paragraph{Informazioni da dimenticare}
+			All'arrivo dell'input $x_t$, la prima cosa da fare è decidere quale informazione precedentemente ottenuta va buttata via. Viene prelevato l'output $h_{t - 1}$ e l'input attuale $x_t$, e restituito il valore compreso fra $0$ e $1$ per ogni numero nello stato della cella $C_{t - 1}$.
+		
+		\paragraph{Nuove informazioni e aggiornamento dello stato}
+			Il prossimo passo è quello di decidere quali informazioni assorbire nello stato della cella. Uno strato con attivazione \texttt{tanh} crea un vettore di valori candidati che potrebbero essere aggiunti al futuro $C_t$.
+		
+		\paragraph{Output}
+			
 
-\section{Costruzione della \texttt{RNN}}\label{sec:building}
+		\begin{itemize}
+			\item rnn
+			\item dipendenze a lungo termine
+			\item lstm, l'idea che c'è dietro
+			\item guida passo per passo
+			\item blstm
+		\end{itemize}
+
+\section{Costruzione del Modello}\label{sec:building}
+
+1. spiegazione formale metriche
+
+2. quali risultati sono stati raggiunti su questo corpus
+
+Esiste una moltitudine di approcci per individuare i fenomeni prosidici nel parlato. Restringendo la visione al solo campo del \textit{Machine Learning}, sono stati proposti in passato metodi supervisionati (vedere \cite[Capitolo 4]{bib:fenomeni-prosodici-prominenza}).
+
+\begin{verbatim}
+
+// LSTM_17
+Overall scores:
+Accuracy 90.83%
+Precision 86.35%
+Recall 86.08%
+F1: 86.22%
+
+// LSTM_32
+Overall scores:
+Accuracy 90.88%
+Precision 86.38%
+Recall 86.24%
+F1: 86.31%
+
+// BLSTM_17x2
+Overall scores:
+Accuracy 91.39%
+Precision 87.11%
+Recall 87.04%
+F1: 87.07%
+\end{verbatim}
 
 \newpage\null\pagestyle{empty}\newpage
 \newpage\null\pagestyle{empty}\newpage
@@ -221,7 +290,18 @@ prima si doveva mostrare che ldcnf > svm, ora che rnn > ldcnf
 	Dovrebbero esserci 120 enunciati. Per riprodurre gli esperimenti del paper \cite{bib:prominence-detection-italian} andranno divisi in 85/train, 15/validation e 20/test, campionandoli casualmente e ripetendo la procedura di campionamento/training/valutazione risultati per 20 volte e mediando le performance finali.
 	
 \section{Costruzione LSTM}
-	È stato appreso quanto segue, cioè poco, e con molte domande.
+	\begin{verbatim}
+		____________________________________________________________________________________________________
+		Layer (type)                     Output Shape          Param #     Connected to                     
+		====================================================================================================
+		bidirectional_20 (Bidirectional) (None, 34, 34)        3128        bidirectional_input_20[0][0]     
+		____________________________________________________________________________________________________
+		dropout_20 (Dropout)             (None, 34, 34)        0           bidirectional_20[0][0]           
+		____________________________________________________________________________________________________
+		timedistributed_20 (TimeDistribu (None, 34, 3)         105         dropout_20[0][0]                 
+		====================================================================================================
+	\end{verbatim}
+	
 	\begin{itemize}
 		\item in keras va implementato un modello sequence to sequence;
 		\item in input ci va una matrice (5, 34), il padding consiste di vettori nulli di lunghezza 5;

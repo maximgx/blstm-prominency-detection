@@ -120,7 +120,7 @@ for learning_phase in range(LEARNING_PHASES):
     # Building Model
     model = Sequential()
     # 17 memory cells seems to be the best choice
-    model.add(Bidirectional(LSTM(17, return_sequences = True),
+    model.add(LSTM(34, return_sequences = True,
                             input_shape = (max_utterance_length, len(COLUMNS) - 1)))
     model.add(Dropout(0.5))
     # Gives a sequence of triples (one triple per each syllable) where each element
@@ -163,6 +163,6 @@ numpy.set_printoptions(threshold = sys.maxsize)
 print (x_dataset[0])
 print (y_dataset[0])
 
-model_filename = 'blstm-prominence.h5'
-print ("Saving model to file...", model_filename)
-model.save(model_filename)
+# model_filename = 'blstm-prominence.h5'
+# print ("Saving model to file...", model_filename)
+# model.save(model_filename)
