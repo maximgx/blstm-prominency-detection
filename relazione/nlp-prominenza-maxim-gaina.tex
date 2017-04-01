@@ -155,16 +155,7 @@
 		Il corpus è stato costruito a partire da conversazioni di persone italiane provenienti dall'area di Pisa, sia femmine che maschi. Il corpus contiene un totale di $120$ espressioni segmentate, con una lunghezza media di $18$ sillabe che vanno da un minimo di $9$ a un massimo di $35$. Ai partecipanti fu chiesto poi di individuare quali fosse secondo loro le prominenze negli enunciati, presentando loro le segmentazioni. L'intero procedimento, in realtà più complesso, è descritto nel documento originale. Le sillabe sono state poi raggruppate in base alla percentuale di convergenza di etichettature da parte di tutti. Questi significa che, dato che ogni sillaba è stata valutata da $10$ persone, essa può essere giudicata prominente da più di $6$, $7$, $8$ o $9$ persone. Infine, sono state selezionate le sillabe convergenti nell'$80\%$ dei casi come prominenti, che sono il $23,56\%$ del totale. È stato fatto poi un'altro tipo di selezione, in cui il peso più importante veniva considerato il livello di affidabilità dei giudici. In questo caso risultavano prominenti il $33,46\%$ delle sillabe nel corpus.
 		
 	\subsection{Le features}
-		Ogni sillaba all'interno dell'espressione ha un determinato numero di caratteristiche. Come è stato già accennato, ci saranno principalmente due attori a determinare le features: pitch-accent e force-accent. Senza andare troppo nel dettaglio, le caratteristiche di ogni sillabe sono le seguenti:
-		\begin{enumerate}
-			\item \textbf{durata nucelo}, normalizzata rispetto alla media e alla varianza del nucleo all'interno dell'espressione;
-			\item \textbf{spectral emphasis}, feature anch'essa normalizzta con \texttt{z-score};
-			\item \textbf{movimenti del pitch}, feature calcolata a partire da parametri forniti dal modello \texttt{TILT} e con l'ausilio di specifici algoritmi per individuare il picco;
-			\item \textbf{intensità complessiva};
-			\item \textbf{durata sillaba}, valore ricavato come per la durata del nucleo, ma riguardante l'intera sillaba.
-		\end{enumerate}
-		A parte la durata della sillaba, tutte le features sono calcolate nel dominio del nucleo della sillaba. La comprensione di come queste caratteristiche si inseriscano nel quadro dello studio (durata della sillaba a parte), viene facilitata dalla gerarchia dei fenomeni proposta nel \cite[Capitolo 3]{bib:fenomeni-prosodici-prominenza}, e riproposta nella Tabella \ref{tab:gerarchia}. Il fenomeno percettivo della prominenza è basato sui fenomeni prosodici dello \textit{stress}	e il \textit{pitch accent}, a loro volta correlati a fenomeni acustici ricavabili da parametri fisici dell'enunciato. Inoltre, ogni fenomeno prosodico è sufficiente per individuare il fenomeno della prominenza, singolarmente o in presenza dell'altro.
-		\begin{table*}[th]
+		\begin{table*}[h]
 			\centering
 			\label{tab:gerarchia}
 			\caption{Gerarchia dei fenomeni coinvolti nel riconoscimento automatico della Prominenza}
@@ -175,10 +166,7 @@
 				Fenomeni acustici   & durata & \begin{tabular}[c]{@{}c@{}}enfasi\\ spettrale\end{tabular} & \begin{tabular}[c]{@{}c@{}}movimenti\\ in F0\end{tabular} & \begin{tabular}[c]{@{}c@{}}intensità\\ globale\end{tabular} \\ \hline
 			\end{tabular}
 		\end{table*}
-		
-	\subsection{Risultati}
-		Per le \texttt{PGM} è stato usato un training set di $100$ espressioni mentre il test set ne conteneva $20$. La Tabella \ref{tab:pgm} riporta le prestazioni raggiunte, senza (ricordiamo) l'utilizzo di alcuna caratteristica linguistica, solo tramite informazioni acustiche.
-		\begin{table*}[ht!]
+		\begin{table*}[h]
 			\centering
 			\caption{Il migliore sistema \texttt{PGM} (\textit{Latent-Dynamic Conditional Neural Fields}) al variare del metodo di selezione delle sillabe prominenti.}
 			\label{tab:pgm}
@@ -189,15 +177,27 @@
 				Best-3 & 0.855 & \textbf{0.831} & \textbf{0.718} & \textbf{0.770} \\ \hline
 			\end{tabular}
 		\end{table*}
-	
-		I risultati ottenuti non possono essere comparati con altri studi nel settore, dato che sarebbe necessario avere lo stesso corpus.
+		Ogni sillaba all'interno dell'espressione ha un determinato numero di caratteristiche. Come è stato già accennato, ci saranno principalmente due attori a determinare le features: pitch-accent e force-accent. Senza andare troppo nel dettaglio, le caratteristiche di ogni sillabe sono le seguenti:
+		\begin{enumerate}
+			\item \textbf{durata nucelo}, normalizzata rispetto alla media e alla varianza del nucleo all'interno dell'espressione;
+			\item \textbf{spectral emphasis}, feature anch'essa normalizzta con \texttt{z-score};
+			\item \textbf{movimenti del pitch}, feature calcolata a partire da parametri forniti dal modello \texttt{TILT} e con l'ausilio di specifici algoritmi per individuare il picco;
+			\item \textbf{intensità complessiva};
+			\item \textbf{durata sillaba}, valore ricavato come per la durata del nucleo, ma riguardante l'intera sillaba.
+		\end{enumerate}
+		
+		A parte la durata della sillaba, tutte le features sono calcolate nel dominio del nucleo della sillaba. La comprensione di come queste caratteristiche si inseriscano nel quadro dello studio (durata della sillaba a parte), viene facilitata dalla gerarchia dei fenomeni proposta nel \cite[Capitolo 3]{bib:fenomeni-prosodici-prominenza}, e riproposta nella Tabella \ref{tab:gerarchia}. Il fenomeno percettivo della prominenza è basato sui fenomeni prosodici dello \textit{stress}	e il \textit{pitch accent}, a loro volta correlati a fenomeni acustici ricavabili da parametri fisici dell'enunciato. Inoltre, ogni fenomeno prosodico è sufficiente per individuare il fenomeno della prominenza, singolarmente o in presenza dell'altro.
+		
+	\subsection{Risultati}
+		
+		Per le \texttt{PGM} è stato usato un training set di $100$ espressioni mentre il test set ne conteneva $20$. La Tabella \ref{tab:pgm} riporta le prestazioni raggiunte, senza (ricordiamo) l'utilizzo di alcuna caratteristica linguistica, solo tramite informazioni acustiche. I risultati ottenuti non possono essere comparati con altri studi nel settore, dato che sarebbe necessario avere lo stesso corpus.
 		
 		In \cite{bib:prominence-detection-italian} è stato anche fatto vedere quanto le \texttt{PGM}, e in particolare le \texttt{LDCNF}, siano meglio in confronto alle \textit{Support Vector Machines} (\texttt{SVM}). L'\textit{F-measure} infatti migliora di mezzo punto, da $0.665$ a $0.716$ per il criterio della convergenza, e di $0.38$ punti per il criterio \textit{best-3}. Si cercherà di fare un confronto simile usando le reti neurali ricorsive, andando a vedere che miglioramento sono in grado di apportare alla causa.
 	
 \section{Reti Neurali Ricorsive}\label{sec:rnn}
 	La Definizione \ref{def:prosodic-prominency} della prominenza prosodica classifica tale fenomeno come continuo e marcato rispettivamente al contensto che lo circonda. Questo significa che le tradizionali reti neurali non possono affrontare un problema del genere, non è chiaro infatti come possano analizzare per esempio, il significato di una parola quando esso dipende da quanto è stato precedentemente detto.
 	
-	Le \textit{Reti Neurali Ricorsive} (\texttt{RNN}) sembrano ovviare a questo problema. Le \texttt{RNN} sono un tipo di rete contenente al loro interno dei cicli, ciò rende possibile che le stesse informazioni persistano al loro interno\footnote{\url{http://colah.github.io/posts/2015-08-Understanding-LSTMs/}}.
+	Le \textit{Reti Neurali Ricorsive} (\texttt{RNN}) sembrano ovviare a questo problema. Le \texttt{RNN} sono un tipo di rete contenente al loro interno dei cicli, ciò rende possibile che le stesse informazioni persistano al loro interno.
 	\begin{figure*}[h]
 		\centering
 		\includegraphics[scale=.4]{img/rnn.png}
@@ -216,24 +216,42 @@
 			\label{fig:lstm}
 		\end{figure*}
 	
-		L'idea alla base è che la \texttt{LSTM} può rimuovere o aggiungere informazioni allo stato della sua cella. Tali scelte vengono influenzate da strutture chiamate \textit{porta} (o \textit{gate}). Una porta fa passare l'informazione nello stato della cella in maniera ottimale, dato che la porta stessa non è altro che uno strato di rete neurale con funzione di attivazione sigmoidea (cella $\sigma$ in Figura \ref{fig:lstm}). Si ricordi che il range di $\sigma$ è compreso fra $0$ (\textit{non far entrare nulla}) e $1$ (\textit{fai entrare tutto}). Seguono ora brevemente i passi che ci sono dietro al funzionamento di una \texttt{LSTM}.
+		L'idea alla base è che la \texttt{LSTM} può rimuovere o aggiungere informazioni allo stato della sua cella. Tali scelte vengono influenzate da strutture chiamate \textit{porta} (o \textit{gate}). Una porta fa passare l'informazione nello stato della cella in maniera ottimale, dato che la porta stessa non è altro che uno strato di rete neurale con funzione di attivazione sigmoidea (cella $\sigma$ in Figura \ref{fig:lstm}). Si ricordi che il range di $\sigma$ è compreso fra $0$ (\textit{non far entrare nulla}) e $1$ (\textit{fai entrare tutto}), è necessario ricordare anche che gli strati di tipo \texttt{tanh} restituiscono valori compresi fra $1$ e $-1$. Seguono brevemente i passi che ci sono dietro al funzionamento di una \texttt{LSTM}, spiegando i principi sottostanti senza addentrarsi troppo nella loro complessità.
+		\begin{figure}[ht!]
+			\centering
+			\caption{Mappa dei parametri interna di una cella \texttt{LSTM}}
+			\includegraphics[scale=.8]{img/inside-lstm.png}
+		\end{figure}
 		
 		\paragraph{Informazioni da dimenticare}
-			All'arrivo dell'input $x_t$, la prima cosa da fare è decidere quale informazione precedentemente ottenuta va buttata via. Viene prelevato l'output $h_{t - 1}$ e l'input attuale $x_t$, e restituito il valore compreso fra $0$ e $1$ per ogni numero nello stato della cella $C_{t - 1}$.
+			All'arrivo dell'input $x_t$, la prima cosa da fare è decidere quale informazione precedentemente ottenuta va buttata via. Viene prelevato l'output $h_{t - 1}$ e l'input attuale $x_t$ (Figura \ref{fig:lstm}), e restituito il valore compreso fra $0$ e $1$ per ogni numero nello stato della cella $C_{t - 1}$. L'equazione \ref{eq:ft} esprime il calcolo dei relativi pesi e bias dello strato $\sigma$, con il dovuto output.
+			\begin{equation}\label{eq:ft}
+				f_t = \sigma(W_f \cdot [h_{t - 1}, x_t] + b_f)
+			\end{equation}
+			$f_t$ è da associare alla parola inglese \textit{forget}, letteralmente \textit{dimentica al passo t}.
 		
-		\paragraph{Nuove informazioni e aggiornamento dello stato}
-			Il prossimo passo è quello di decidere quali informazioni assorbire nello stato della cella. Uno strato con attivazione \texttt{tanh} crea un vettore di valori candidati che potrebbero essere aggiunti al futuro $C_t$.
+		\paragraph{Decidere quali informazione assorbire}
+			Il prossimo passo è quello di decidere quali informazioni assorbire nello stato della cella. In questa fase è coinvolto un'altro strato $\sigma$, detto \textit{porta di input}, e uno strato \texttt{tanh} che crea un vettore di valori candidati con i queli \textit{potrebbe} essere aggiornato il nuovo stato. L'output dello strato $\sigma$ è dato dall'equazione \ref{eq:it}, mentre il calcolo dell'ipotetico stato aggiornato $\tilde{C_t}$ viene espresso dall'equazione \ref{eq:futurec}.
+			\begin{equation}\label{eq:it}
+				i_t = \sigma(W_i \cdot [h_{t - 1}, h_t] + b_i)
+			\end{equation}
+			\begin{equation}\label{eq:futurec}
+				\tilde{C_t} = tanh(W_C \cdot [h_{t - 1}, h_t] + b_C)
+			\end{equation}
+			
+		\paragraph{Aggiornamento dello stato}
+			Una volta deciso cosa si vuole ricavare dal nuovo input, è il momento di aggiornare effettivamente $C_{t - 1}$ per ottenere $C_t$.
+			\begin{enumerate}
+				\item per dimenticare quello che è stato deciso viene eseguito $C_{t - 1} \cdot f_t$;
+				\item per assorbire quello che è stato ritenuto necessario viene eseguito $\tilde{C_t} \cdot i_t$;
+				\item i risultati dei due passi sopra vengono sommati (Equazione \ref{eq:newstate}).
+			\end{enumerate}
+			\begin{equation}\label{eq:newstate}
+				C_t = f_t * C_{t - 1} + i_t * \tilde{C_t}
+			\end{equation}
 		
 		\paragraph{Output}
-			
-
-		\begin{itemize}
-			\item rnn
-			\item dipendenze a lungo termine
-			\item lstm, l'idea che c'è dietro
-			\item guida passo per passo
-			\item blstm
-		\end{itemize}
+			Una volta creato lo stato $C_t$ bisogna decidere l'output, esso sarà basato sempre sullo stato della cella, ma conterrà solo alcuni suoi valori filtrati. Ancora una volta, uno strato $\sigma$ decide quali saranno le parti di $\tilde{C_t}$ a formare $o_t$. $o_t$ verrà poi moltiplicato per lo stato $C_t$, filtrato da un \textit{layer} \texttt{tanh}, ottenendo così l'output finale $h_t$, che verrà usato al passo $t$ per ricavare $h_{t + 1}$.
 
 \section{Costruzione del Modello}\label{sec:building}
 
@@ -244,27 +262,26 @@
 Esiste una moltitudine di approcci per individuare i fenomeni prosidici nel parlato. Restringendo la visione al solo campo del \textit{Machine Learning}, sono stati proposti in passato metodi supervisionati (vedere \cite[Capitolo 4]{bib:fenomeni-prosodici-prominenza}).
 
 \begin{verbatim}
-
-// LSTM_17
-Overall scores:
-Accuracy 90.83%
-Precision 86.35%
-Recall 86.08%
-F1: 86.22%
-
-// LSTM_32
-Overall scores:
-Accuracy 90.88%
-Precision 86.38%
-Recall 86.24%
-F1: 86.31%
-
-// BLSTM_17x2
-Overall scores:
-Accuracy 91.39%
-Precision 87.11%
-Recall 87.04%
-F1: 87.07%
+	// LSTM_17
+	Overall scores:
+	Accuracy 90.83%
+	Precision 86.35%
+	Recall 86.08%
+	F1: 86.22%
+	
+	// LSTM_34
+	Overall scores:
+	Accuracy 90.88%
+	Precision 86.38%
+	Recall 86.24%
+	F1: 86.31%
+	
+	// BLSTM_17x2
+	Overall scores:
+	Accuracy 91.39%
+	Precision 87.11%
+	Recall 87.04%
+	F1: 87.07%
 \end{verbatim}
 
 \newpage\null\pagestyle{empty}\newpage
