@@ -1,4 +1,4 @@
-\documentclass[twoside,twocolumn,11pt]{extarticle}
+\documentclass[twoside,twocolumn,10pt]{extarticle}
 
 \usepackage{textcase}
 \usepackage{amsthm}
@@ -21,9 +21,37 @@
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang,small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
+\usepackage{subcaption}
 
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
 
 \usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
 
@@ -44,7 +72,7 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Running title $\bullet$ May 2016 $\bullet$ Vol. XXI, No. 1} % Custom header text
+\fancyhead[C]{Riconoscimento Automatico della Prominenza in Italiano $\bullet$ Aprile 2017 $\bullet$ \textit{NLP}} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 \usepackage{titling} % Customizing the title section
@@ -56,7 +84,7 @@
 
 \pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 \posttitle{\end{center}} % Article title closing formatting
-\title{Rilevamento automatico della Prominenza Prosodica nel parlato in Italiano: Reti Neurali Ricorsive} % Article title
+\title{Riconoscimento automatico della Prominenza in Italiano:\\Reti Neurali Ricorsive} % Article title
 \author{%
 \textsc{Maxim Gaina} \\[1ex] % Your name
 \normalsize Università di Bologna\thanks{Progetto per il corso di Elaborazione del Linguaggio Naturale, A.A. 2016/2017, prof. Fabio Tamburini.} \\ % Your institution
@@ -195,18 +223,19 @@
 		In \cite{bib:prominence-detection-italian} è stato anche fatto vedere quanto le \texttt{PGM}, e in particolare le \texttt{LDCNF}, siano meglio in confronto alle \textit{Support Vector Machines} (\texttt{SVM}). L'\textit{F-measure} infatti migliora di mezzo punto, da $0.665$ a $0.716$ per il criterio della convergenza, e di $0.38$ punti per il criterio \textit{best-3}. Si cercherà di fare un confronto simile usando le reti neurali ricorsive, andando a vedere che miglioramento sono in grado di apportare alla causa.
 	
 \section{Reti Neurali Ricorsive}\label{sec:rnn}
-	La Definizione \ref{def:prosodic-prominency} della prominenza prosodica classifica tale fenomeno come continuo e marcato rispettivamente al contensto che lo circonda. Questo significa che le tradizionali reti neurali non possono affrontare un problema del genere, non è chiaro infatti come possano analizzare per esempio, il significato di una parola quando esso dipende da quanto è stato precedentemente detto.
-	
-	Le \textit{Reti Neurali Ricorsive} (\texttt{RNN}) sembrano ovviare a questo problema. Le \texttt{RNN} sono un tipo di rete contenente al loro interno dei cicli, ciò rende possibile che le stesse informazioni persistano al loro interno.
 	\begin{figure*}[h]
 		\centering
 		\includegraphics[scale=.4]{img/rnn.png}
 		\caption{\textit{Unrolling} di una rete neurale ricorsiva}
 		\label{fig:unroll}
 	\end{figure*}
+	La Definizione \ref{def:prosodic-prominency} della prominenza prosodica classifica tale fenomeno come continuo e marcato rispettivamente al contensto che lo circonda. Questo significa che le tradizionali reti neurali non possono affrontare un problema del genere, non è chiaro infatti come possano analizzare per esempio, il significato di una parola quando esso dipende da quanto è stato precedentemente detto.
+	
+	Le \textit{Reti Neurali Ricorsive} (\texttt{RNN}) sembrano ovviare a questo problema. Le \texttt{RNN} sono un tipo di rete contenente al loro interno dei cicli, ciò rende possibile che le stesse informazioni persistano al loro interno.
+
 	Nella Figura \ref{fig:unroll} si può vedere come, preso un ciclo, una \texttt{RNN} si può interpretare come una successione di copie della stessa rete. La loro struttura \textit{a catena} si adatta perfettamente al processamento di sequenze e liste. L'interpretazione è la seguente: data un porzione di rete $A$, essa guarda l'input $x_t$ e produce l'output $h_t$, permettendo tramite il loop di passare l'informazione dal passo $t$ a $t + 1$. Una \texttt{RNN} può quindi guardare dietro nel tempo, individuare una dipendenza fra passato e presente e quindi produrre l'output più opportuno. La domanda ora è la seguente: \textit{quanto} indietro nel tempo? Sfortunatamente, le \texttt{RNN} perdono efficacia man mano che la distanza tra passato interessante e presente aumenta.
 	
-	\subsection{Long Short Term Memory}
+	\subsection{Long Short Term Memory}\label{subsec:lstm}
 		Le \textit{Long Short Term Memory} (\texttt{LSTM}) sono un particolare tipo di \texttt{RNN} capaci di apprendere dipendenze a lungo termine. Infatti, le \texttt{LSTM} sono state proposte proprio per ovviare al problema delle \texttt{RNN} precedentemente descritto. I moduli, in questo tipo di architettura (Figura \ref{fig:lstm}), racchiudono al loro interno più layer con funzione di attivazione \texttt{sigmoid} e \texttt{tanh} che interagiscono fra loro in maniera ben specifica.
 		
 		\begin{figure*}[h]
@@ -217,11 +246,20 @@
 		\end{figure*}
 	
 		L'idea alla base è che la \texttt{LSTM} può rimuovere o aggiungere informazioni allo stato della sua cella. Tali scelte vengono influenzate da strutture chiamate \textit{porta} (o \textit{gate}). Una porta fa passare l'informazione nello stato della cella in maniera ottimale, dato che la porta stessa non è altro che uno strato di rete neurale con funzione di attivazione sigmoidea (cella $\sigma$ in Figura \ref{fig:lstm}). Si ricordi che il range di $\sigma$ è compreso fra $0$ (\textit{non far entrare nulla}) e $1$ (\textit{fai entrare tutto}), è necessario ricordare anche che gli strati di tipo \texttt{tanh} restituiscono valori compresi fra $1$ e $-1$. Seguono brevemente i passi che ci sono dietro al funzionamento di una \texttt{LSTM}, spiegando i principi sottostanti senza addentrarsi troppo nella loro complessità.
-		\begin{figure}[ht!]
+	
+		\begin{figure*}[h]
 			\centering
-			\caption{Mappa dei parametri interna di una cella \texttt{LSTM}}
-			\includegraphics[scale=.8]{img/inside-lstm.png}
-		\end{figure}
+			\begin{subfigure}[b]{.496\textwidth}
+				\includegraphics[width=\textwidth]{img/inside-lstm.png}
+				\caption{Parametri calcolati nelle prime fasi}
+			\end{subfigure}
+			\begin{subfigure}[b]{.496\textwidth}
+				\includegraphics[width=\textwidth]{img/inside-lstm2.png}
+				\caption{Parametri calcolati nelle ultime fasi}
+			\end{subfigure}
+			\caption{Mappa dei parametri interni a una \texttt{LSTM}}
+			\label{fig:parmap}
+		\end{figure*}
 		
 		\paragraph{Informazioni da dimenticare}
 			All'arrivo dell'input $x_t$, la prima cosa da fare è decidere quale informazione precedentemente ottenuta va buttata via. Viene prelevato l'output $h_{t - 1}$ e l'input attuale $x_t$ (Figura \ref{fig:lstm}), e restituito il valore compreso fra $0$ e $1$ per ogni numero nello stato della cella $C_{t - 1}$. L'equazione \ref{eq:ft} esprime il calcolo dei relativi pesi e bias dello strato $\sigma$, con il dovuto output.
@@ -252,201 +290,146 @@
 		
 		\paragraph{Output}
 			Una volta creato lo stato $C_t$ bisogna decidere l'output, esso sarà basato sempre sullo stato della cella, ma conterrà solo alcuni suoi valori filtrati. Ancora una volta, uno strato $\sigma$ decide quali saranno le parti di $\tilde{C_t}$ a formare $o_t$. $o_t$ verrà poi moltiplicato per lo stato $C_t$, filtrato da un \textit{layer} \texttt{tanh}, ottenendo così l'output finale $h_t$, che verrà usato al passo $t$ per ricavare $h_{t + 1}$.
+			\begin{equation}
+				o_t = \sigma(W_o \cdot [h_{t - 1}, x_t] + b_o)
+			\end{equation}
+			\begin{equation}
+				h_t = o_t * tanh(C_t)
+			\end{equation}
+			La \textit{mappa} dei parametri appena esposti si possono intuitivamente osservare nella Figura \ref{fig:parmap}.
+		
+		La breve spiegazione qui fornita riflette i concetti base\footnote{\url{http://colah.github.io/posts/2015-08-Understanding-LSTMs/}}, esistono comunque parecchie versioni concettuali che variano sensibilmente e ancora più numerose sono le implementazioni.
+		
+	\subsection{Un problema di Sequenze}
+		Il motivo per cui le \texttt{LSTM} sono adatte a trattare il riconoscimento automatico della prominenza è che sono in grado di processare \textit{sequenze} di vettori\footnote{\url{http://karpathy.github.io/2015/05/21/rnn-effectiveness/}}, che rappresentano le \textit{features}, e restituire sequenze di dimensione fissa a piacere. Ed è anche il motivo per il quale vengono usate nel trattamento dei video, testi, immagini, problemi \texttt{NLP}, e altro. I problemi sono risolvibili (classificazione, previsione, ecc...) tramite forme di mappatura rappresentati nella Figura \ref{fig:seqs}.	In base al tipo di mapping scelto, varia l'architettura della \textit{Rete Neurale Ricorsiva}. Vedremo nella prossima sezione come risulta l'architettura nel nostro caso.
+		
+		\begin{figure*}[h]
+			\centering
+			\includegraphics[scale=.3]{img/seqs.jpeg}
+			\caption{Problemi \textit{sequence-to-sequence} trattabili con le \texttt{RNN}}
+			\label{fig:seqs}
+		\end{figure*}
 
 \section{Costruzione del Modello}\label{sec:building}
-
-1. spiegazione formale metriche
-
-2. quali risultati sono stati raggiunti su questo corpus
-
-Esiste una moltitudine di approcci per individuare i fenomeni prosidici nel parlato. Restringendo la visione al solo campo del \textit{Machine Learning}, sono stati proposti in passato metodi supervisionati (vedere \cite[Capitolo 4]{bib:fenomeni-prosodici-prominenza}).
-
-\begin{verbatim}
-	// LSTM_17
-	Overall scores:
-	Accuracy 90.83%
-	Precision 86.35%
-	Recall 86.08%
-	F1: 86.22%
+	Le \texttt{LSTM} precedentemente riportare, così come le reti neurali in genere, hanno diverse varianti e implementazioni. Per la realizzazione del modello è stato scelto \texttt{Keras} \cite{bib:chollet2015keras}, che è un \texttt{API} ad alto livello per diverse tipologie di reti neurali. Il principio che sta alla base di \texttt{Keras} è che la chiave per fare della buona ricerca consiste nel rendere minima la distanza fra l'idea e la sua realizzazione, si ha quindi una libreria parecchio potente a disposizione. È scritta in \texttt{Python}, e si può scegliere l'implemtazione basata su \texttt{Theano} o \texttt{TensorFlow}.
 	
-	// LSTM_34
-	Overall scores:
-	Accuracy 90.88%
-	Precision 86.38%
-	Recall 86.24%
-	F1: 86.31%
+	In \texttt{Keras}, un modello è una pila di diversi strati (reti neurali) collegati fra loro, dove gli input entrano nello strato d'ingresso e fuoriescono risultati dallo strato di uscita. Si possono però unire diversi modelli in uno unico, combinando i loro output tramite gli strati di classe \texttt{Merge}.
 	
-	// BLSTM_17x2
-	Overall scores:
-	Accuracy 91.39%
-	Precision 87.11%
-	Recall 87.04%
-	F1: 87.07%
-\end{verbatim}
-
-\newpage\null\pagestyle{empty}\newpage
-\newpage\null\pagestyle{empty}\newpage
-\newpage\null\pagestyle{empty}\newpage
-
-\section{Corpus PROVVISORIO}
-	Nel file coi dati si ha che:
-	\begin{itemize}
-		\item i dati di ogni sillaba per ogni enunciato formano un unico blocco separato da una riga vuota;
-		\item i dati di ogni sillaba contengono 15 feature in 3 blocchi (1 blocco per la sillaba precedente, la corrente e la successiva), sono 5 feature:
-		\begin{enumerate}
-			\item durata nucleo;
-			\item spectral emphasis;
-			\item loudness;
-			\item tilt;
-			\item durata sillaba.
-		\end{enumerate}
-	\end{itemize}
-	Quindi sarà necessario scartare il primo e l'ultimo blocco (le LSTM analizzano la 
-	sequenza da sole e quindi non hanno bisogno del prima e del dopo) e mantenere per ogni sillaba solo i 5 dati centrali. L'ultima colonna (0/1) indica la prominenza o meno etichettata manualmente.
+	Per la realizzazione di questo progetto è stato usato \texttt{Python 3.5} e \texttt{Keras 1.2.2}. Verranno ora descritti brevemente gli strati impiegati nel tentativo di costruire la miglior rete neurale.
 	
-	Dovrebbero esserci 120 enunciati. Per riprodurre gli esperimenti del paper \cite{bib:prominence-detection-italian} andranno divisi in 85/train, 15/validation e 20/test, campionandoli casualmente e ripetendo la procedura di campionamento/training/valutazione risultati per 20 volte e mediando le performance finali.
+	\paragraph{Masking Layer}
+		Lo strato in questione ha il compito di \textit{mascherare} i valori in input che sono uguali a un certo valore. Va tenuto presente che la rete neurale prenderà in input sempre frasi di lunghezza $n = 34$, me le espressioni più corte avranno (alla fine) vettori di zeri al posto delle features mancanti. In questo caso il valore da mascherare sarà quindi $\{0, 0, 0, 0, 0\}$:
+		\begin{center}
+			\begin{verbatim}
+				model.add(Masking(
+					mask_value = [0.0, 0.0, 0.0, 0.0, 0.0]))
+			\end{verbatim}
+		\end{center}
+		Significa letteralmente che la rete neurale non cercherà di imparare a partire dai valori mascherati.
 	
-\section{Costruzione LSTM}
-	\begin{verbatim}
-		____________________________________________________________________________________________________
-		Layer (type)                     Output Shape          Param #     Connected to                     
-		====================================================================================================
-		bidirectional_20 (Bidirectional) (None, 34, 34)        3128        bidirectional_input_20[0][0]     
-		____________________________________________________________________________________________________
-		dropout_20 (Dropout)             (None, 34, 34)        0           bidirectional_20[0][0]           
-		____________________________________________________________________________________________________
-		timedistributed_20 (TimeDistribu (None, 34, 3)         105         dropout_20[0][0]                 
-		====================================================================================================
-	\end{verbatim}
+	\paragraph{Dense Layer}
+		È lo strato che implementa una tipica rete neurale densamente connessa, con un arbitrario numero di nodi, funzione di attivazione e altro.
+		
+	\paragraph{LSTM Layer}
+		È l'implementazione di una rete \texttt{LSTM} descritta in \ref{subsec:lstm}.
+		
+	\paragraph{Dropout Layer}
+		L'obiettivo principale dello strato di \texttt{Dropout} è quello di prevenire l'overfitting, e viene spesso abbinato ai layer \texttt{LSTM}. Si tratta di una tecnica in cui nella fase di training un numero casuale di unità della rete vengono ignorate, costringendo i \textit{neuroni} (o celle) attive a imparare anche per conto di quelli mancanti. L'effetto (desiderato) è che l'intera rete diventa meno sensibile agli specifici pesi di ogni unità di rete. Ogni volta, i nodi selezionati vengono gettati fuori dal quadro con una certa probabilità (per esempio il 50\%).
+		\begin{center}
+			\begin{verbatim}
+				model.add(Dropout(0.5))
+			\end{verbatim}
+		\end{center}
 	
-	\begin{itemize}
-		\item in keras va implementato un modello sequence to sequence;
-		\item in input ci va una matrice (5, 34), il padding consiste di vettori nulli di lunghezza 5;
-		\begin{itemize}
-			\item[\textbf{\checkmark}] padding fatto con Keras
-		\end{itemize}
-		\item \textbf{mi trovo a questo punto}
-		\begin{itemize}
-			\item[\textbf{?}] la forma dei dati va bene o serve un embedded layer?
-		\end{itemize}
-		\item a questo punto, come definisco l'architettura della rete
-		\begin{itemize}
-			\item[\textbf{?}] quanti layer ci devono essere e di che tipo?
-			\item[\checkmark] provato un modello con 86\% di accuratezza
-			\item provare sequence2sequence
-			\item provare a implementare lavori dalla discussione (leggere domani)
-			\item dopo aver provato l'inserzione di Timedistributed informarsi anche su Bidirectional
-		\end{itemize}
-	\end{itemize}
-	Durante la costruzione, in futuro, provare a vedere come si comporta la rete in modalità \texttt{stateful = True} e al contrario.
-
-\section{Lettura \cite{bib:fenomeni-prosodici-prominenza}}
-	\subsection{Rassegna termini e metodi}
-		\begin{itemize}
-			\item definizione formale di prominenza;
-			\item \textit{stress} e \textit{intonazione} (\textbf{pitch}, oppure \textbf{tono}) principali attori di collegamento fra prominenza e informazioni fonetico acustiche negli ennunciati;
-			\item secondo alcuni studi il \textit{profilo del pitch} (variazione della frequenza fondamentale) risulta essere il più importante indicatore, poi lunghezza e infine intensità;
-			\item teoria \textbf{pitch accent} [1958], proposta per stabilire equivalenza netta tra prominenza e fenomeni collegati all'intonazione e quindi alla configurazione assunte dalla frequenza fondamentale; però questo teoria è una presa di posizione troppo netta;
-			\item teoria \textbf{metrica} [1975], creazione di albero metrico e griglia metrica, infine creazione della strutture \textit{tune};
-			\item \textbf{isocronia} [1979], la prominenza è un fenomeno ritmico che avviene a intervalli di tempo regolari, ma lo studio viene messo in dubbio da alcuni test empirici;
-			\item \textit{tone languages} (cinese mandarino) e \textit{stress languages} (inglese), nella prima categoria il pitch determina anche il significato della parola: poi però c'è una via di mezzo che sono le \textit{pitch-accented langauges};
-			\item \textit{stress lessica} e \textit{stress frasale};
-			\item verranno trattate lingue stress accented (inglese, spagnolo, olandese, italiano...);
-			\item vengono individuati essenzialmente due attori principali nella definizione di prominenza:
-			\begin{itemize}
-				\item pitch accent
-				\item stress (frasale)
-			\end{itemize}
-		\end{itemize}
+	\paragraph{TimeDistributed Wrapper}
+		Non si tratta di uno strato bensì di uno \texttt{wrapper}. Prende in input un determinato layer che viene applicato ad ogni intervallo di tempo dell'input della rete. Questo wrapper farà quindi sì che la rete restitiuisca sequenze.
+		\begin{center}
+			\begin{verbatim}
+				model.add(TimeDistributed(Dense(5)))
+			\end{verbatim}
+		\end{center}
 	
-	\subsection{Analisi fonetico-acustica}
-		\begin{itemize}
-			\item tre misure:
-			\begin{itemize}
-				\item segmentazione ennunciato e misure di durata, lo studio si baserà su unità di tipo sillabico; è necessario identificare nuclei sillabici dato che hanno le stesse caratteristiche delle sillabe intere, ma queste ultime sono difficili da identificare nel parlato; algoritmo:
-					\begin{enumerate}
-						\item isolamento dei nuclei
-						\item identificazione dei confini dei nuclei
-						\item durata dei nuclei sillabici
-					\end{enumerate}
-				\item misure relative ai profili intonativi (\textbf{\textit{pitch}}); i suoni \textbf{sonori} sono prodotti esclusivamente dalle corde vocali e poi ci sono quelli \textbf{sordi}. La frequenza fondamentale risulta nulla durante qualli sordi quindi il profilo del pitch risulterà definito esclusivamente in corrispondenza dei suoni sonori;
-				\item misure relative all'intensità o energia;
-			\end{itemize}
-		\end{itemize}
-	
-	\subsection{Identificazione dei fenomeni prosodici}
-		\begin{itemize}
-			\item ricordiamo: per riconoscere fenomeno prosodico c'è bisogno dello stress della sillaba (fenomeno a carico del nucleo sillabico), o la presenza di un pitch accent all'interno della sillaba analizzata;
-			
-		\begin{figure*}
-			\begin{table}[H]
-				\label{my-label}
-				\begin{tabular}{l|c|c|c|c}
-					Fenomeni percettivi & \multicolumn{4}{c}{Prominenza}                                                                                                                                                               \\ \hline
-					Fenomeni prosodici  & \multicolumn{2}{c}{Stress}                                         & \multicolumn{2}{c}{Pitch accent}                                                                                       \\ 
-					Fenomeni acustici   & durata & \begin{tabular}[c]{@{}c@{}}enfasi\\ spettrale\end{tabular} & \begin{tabular}[c]{@{}c@{}}movimenti\\ in F0\end{tabular} & \begin{tabular}[c]{@{}c@{}}intensità\\ globale\end{tabular}
-				\end{tabular}
-			\end{table}
+	\subsection{Costruzione della rete}
+		Avendo estratto le features di sillabe per ogni enunciato all'interno del corpus e le relative classificazioni di prominenza, viene individuata la frase contenente più sillabe in assoluto. Ogni sillaba possiede un vettore di $5$ features e la sua classificazione binaria \textit{prominente / non prominente}, e la frase più lunga contiene $n = 34$ sillabe. Si ha quindi il problema di mappare correttamente i seguenti insiemi:
+		\begin{equation}
+			\{v_1, ..., v_n\} \rightarrow \{p_1, ..., p_n\}
+		\end{equation}
+		Nella Figura \ref{fig:seqs} ciò corrisponde al modello \textit{many to many}, il quinto tipo. Sappiamo cosa è $v_i$, è necessario ora decidere cosa è $p_i$. All'inizio l'assunzione era che $p_i \in \{0, 1\}$ per indicare la non prominenza e il contrario, ma tutti i modelli costruiti intorno a questa scelta erano davvero scadenti ($F1$ non più del $46\%$). Tali modelli prevedevano, oltre i dovuti layer \texttt{LSTM}, l'utilizzo di \texttt{Masking} come layer di input e uno strato \texttt{Dense(34)} che ritornasse $0$ e $1$ per ogni sillaba in ingresso.
+		
+		Per cercare altre vie è stato asserito che $p_i \in \{\{0, 1\}, \{1, 0\}\}$, dove $1$ nella prima posizione stava per indicare che la sillaba non è prominente e nella seconda posizione il contrario. Per realizzare la cosa è stato impostato \texttt{TimeDistributed(Dense(2))} come strato finale, con funzione di attivazione \texttt{softmax}, in modo che ritornasse dati in dimensione $(34, 2)$, con probabilità accumulata in una delle due posizioni. I sistemi risultanti davano un migliorato score $F1$ ma l'accuratezza era parecchio calata, a circa il $60\%$.
+		
+		È stato infine intuito che la \textit{sporcizia} è data dalle sillabe mancanti: per qualche motivo lo strato \texttt{Masking} non dava i risultati sperati. Il problema è stato raggirato togliendo tale strato e, decidendo di non ignorare le sillabe mancanti, ma di classificare pure quelle. L'output per ogni \textit{timestep} è quindi diventato $p_i \in \{\{1, 0, 0\}, \{0, 1, 0\}, \{0, 0, 1\}\}$ (per indicare rispettivamente non prominenza, prominenza e assenza). Infinie, l'ultimo layer \texttt{Dense(3)} con attivazione \texttt{softmax} e dentro uno wrapper \texttt{TimeDistributed}, avrebbe concentrato le probabilità in una delle $3$ posizioni.
+		
+	\subsection{Bidirectional \texttt{LSTM}}
+		\begin{figure}
+			\centering
+			\label{fig:blstm}
+			\includegraphics[scale=.26]{img/blstm.png}
+			\caption{Codice abbreviato del modello con i migliori risultati}
+		\end{figure}
+		\begin{figure*}[ht!]
+			\centering
+			\caption{Parametri calcolati nelle prime fasi}
+			\lstinputlisting[language=Python]{code/seq.py}
+			\label{fig:modelcode}
 		\end{figure*}
+		\begin{table*}[]
+			\centering
+			\caption{My caption}
+			\label{tab:results}
+			\begin{tabular}{lcccc}
+				\hline
+				& \multicolumn{1}{l}{Accuratezza A} & \multicolumn{1}{l}{Precisione P} & \multicolumn{1}{l}{Richiamo R} & \multicolumn{1}{l}{Fmeasure F1} \\ \hline
+				LDCNF best-3 & 85.50\% & 83.10\% & 71.80\% & 77.00\% \\
+				LSTM\_17 & 90.83\% & 86.35\% & 86.08\% & 86.22\% \\
+				LSTM\_34 & 90.88\% & 86.38\% & 86.24\% & 86.31\% \\
+				\textbf{BLSTM\_17x2} & \textbf{91.39\%} & \textbf{87.11\%} & \textbf{87.04\%} & \textbf{87.07\%} \\ \hline
+			\end{tabular}
+		\end{table*}
+		In base a prove empiriche la scelta finale è ricaduta sulla seguente architettura, in ordine:
+		\begin{itemize}
+			\item \texttt{LSTM} Layer;
+			\item \texttt{Dropout} Layer;
+			\item \texttt{Dense} layer contenuto dentro wrapper \texttt{TimeDistributed}.
 		\end{itemize}
+		In seguito ad alcune ricerche è stato scoperto che una versione di rete \texttt{LSTM}, ovvero le \textit{Bidirectional} \texttt{LSTM} (\texttt{BLSTM}), si comportano molto bene nei problemi di \textit{sequence-labeling} in ambito \texttt{NLP} (come nel seguente lavoro \cite[Capitolo 5]{bib:blstm}). Sono state messe alla prova, incapuslando una rete \texttt{LSTM} dentro uno wrapper \texttt{Bidirectional} comodamente offerto da \texttt{Keras}. L'idea che sta alla base delle reti \texttt{BLSTM} è che un dato output $y_t$ non dipende solo dalle esperienze passate ma anche da quelle $future$. Esse racchiudono infatti uno strato \texttt{LSTM} \textit{forward} un'altro detto \texttt{backward} (Figura \ref{fig:blstm}), creando una doppia dipendenza. Probabilmente non sempre si hanno a disposizione informazioni future, per le applicazioni in tempo reale, ma in questo caso si può testare il comportamento di un'architettura del genere, in quanto una sillaba prominente lo è anche perché quelle dopo lo sono di meno.
 	
-\section{Lettura \cite{bib:prominence-by-acoustic-analyses}}
-	\begin{itemize}
-		\item come è possibile definire la prominenza?
-		\item qual è il miglior dominio di promineneza in acustica? sillabi;
-		\item la prominenza è un fenomeno discreto o continuo? fenomeno continuo o multilivello;
-		\item quali sono i parametri che combinati spiegano la prominenza? 
-		\item ci sono parametri universali inter-linguistici?
-		\item meglio gli approcci rulebase o machine learning?
-		\item come possono essere valutati correttamente i sistemi di valutazione automatica?
-	\end{itemize}
+	\subsection{Risultati}
+		Venendo al dunque, una frase nel corpus è stata eliminata in quanto contenente possibili errori. Delle $119$ frasi a disposizione, il \textit{training-set} ne contiene $85$; il \textit{validation-set} $15$ e il \textit{test-set} $19$. Nei test riportati qui rientrano i $3$ modelli che si sono comportati meglio in assoluto: \texttt{LSTM} a $n/2 = 17$ celle; \texttt{LSTM} a $n = 34$ celle; e infine una \texttt{BLSTM} con $n/2$ celle per ognuno dei due strati interni. Parte del codice è stato riportato nella Figura \ref{fig:modelcode}. Sono state provate diverse dimensioni di \texttt{batch} e numero di epoche, $50$ epoche sono sembrate sufficienti in quanto troppe epoche portavano a fenomeni di \textit{overfitting}.
+		
+		Sono state realizzate $20$ fasi di apprendimento, cambiando l'ordine delle espressioni nel corpus casualmente ogni volta ed estraendo alla fine le $4$ metriche per poi farne la media. I risultati finali sono riportati nella Tabella \ref{tab:results}.
+	
+\section{Conclusione}
+	partendo da zero è stato indagato il fenomeno della prominenza, reti lstm bla bla bla
 
-	Si può dare una prima parziale formalizzazione della prominenza:
-	\begin{equation}
-		\label{eq:prom}
-		Prom^i = FA^i + PA^i
-	\end{equation}
-	$FA$ indica l'accento di forza, mentre $PA$ il pitch accent, il tutto all'$i$-esimo segmento.
-
-\section{Lettura \cite{bib:prominence-detection-italian}}
-	Vengono usate le (a partire da CRF che captano solo funzioni lineari) CNF, LDCRF, e le LDCNF. Questi tipi di PGM (Probabilistic Graphical Model) sono in grado di maneggiare sequenze di input output facendo previsioni su quella di output, considerando le configurazioni d input.
-	\begin{itemize}
-		\item l'$i$-esimo nodo in input prende un vettore di features;
-		\item l'$i$-esimo nodo in output assegna un label, condizionato dai relativi vettori di features in input.
-	\end{itemize}
-
-	Vengono spiegati i vari tipi di \texttt{PGM} e il modo in cui è stato creato il corpus. Risultati ottenuti.
-
-\section{Concetti Base}
-	\subsection{Reti Deep: LSTM}
-		Come descritto in \cite{bib:prominence-by-acoustic-analyses}, i principali vantaggi di usare metodi machine learning sono:
-		\begin{itemize}
-			\item approccio induttivo, il modello è appreso dai dati;
-			\item classificazione rapida;
-			\item rilevatori/classificatori altamente precisi.
-		\end{itemize}
-		Gli svantaggi invece consistono in:
-		\begin{itemize}
-			\item necessità di grossi corpora annotati per apprendere;
-			\item i sistemi rischiano di essere legati allo specifico corpora o alla lingua usata durante la fase di apprendimento;
-			\item i modelli prodotti sono tipicamente \textit{a scatola chiusa}, non c'è modo di estrarre informazioni linguistiche utili.
-		\end{itemize}
+% campionandoli casualmente e ripetendo la procedura di campionamento/training/valutazione risultati per 20 volte e mediando le performance finali.	
 		
 \begin{thebibliography}{99}	
 	\bibitem{bib:fenomeni-prosodici-prominenza}
 		Fabio Tamburini,
 		\newblock \emph{Fenomeni Prosodici e Prominenza: Un Approccio Acustico},
 		2005.
-	
+
 	\bibitem{bib:prominence-detection-italian}
 		Fabio Tamburini, Chiara Bertini, Pier Marco Bertinetto,
 		\newblock \emph{Prosodic prominence detection in Italian continuous speech using probabilistic graphical models},
 		2014
-		
+
 	\bibitem{bib:prominence-by-acoustic-analyses}
 		Fabio Tamburini,
 		\newblock \emph{Automatic Detection of Prosodic Prominence by Means of Acoustic Analyses},
 		2015
+
+	\bibitem{bib:chollet2015keras}
+		Chollet, Fran\c{c}ois,
+		\newblock \emph{Keras},
+		\url{https://github.com/fchollet/keras},
+		2015
+
+	\bibitem{bib:blstm}
+		Alex Graves,
+		\newblock \emph{Supervised Sequence Labelling with Recurrent Neural Networks},
+		2008
 \end{thebibliography}
 
 \end{document}
