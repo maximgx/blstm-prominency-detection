@@ -37,6 +37,14 @@ TRAIN_INDEXES = numpy.arange(85)
 VALIDATION_INDEXES = numpy.arange(85, 100)
 TESTSET_INDEXES = numpy.arange(100, 119)
 
+'''
+            ERROR       NO ERROR (new)
+Accuracy    91.04%      91.17%
+Precision   86.59%      86.77%
+Recall      86.51%      86.73%
+F1:         86.55%      86.75%
+'''
+
 dataFrame = pandas.read_csv(PATH, delim_whitespace = True,
                             header = None,
                             names = COLUMNS,
@@ -150,6 +158,7 @@ for learning_phase in range(LEARNING_PHASES):
     print ("\tF1: %.2f%%" % (metrics[2] * 100))
 
     scores.append(metrics)
+
     del model
 
 overall_scores = numpy.mean(scores, axis = 0)

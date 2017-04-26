@@ -1,5 +1,6 @@
 \documentclass[twoside,twocolumn,10pt]{extarticle}
 
+\usepackage{multirow}
 \usepackage{textcase}
 \usepackage{amsthm}
 \usepackage{amssymb}
@@ -97,7 +98,7 @@
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
 \begin{abstract}
-\noindent Nel parlato, la prominenza prosodica è un fenomeno percettivo che può influire pesantemente sulla semantica delle frasi pronunciate, per questo guadagna un ruolo fondamentale nella comunicazione umana. Sono stati svolti in passato diversi sperimenti per rilevare le sillabe prominenti all'interno di una frase, che prevedevano l'utilizzo di svariati strumenti offerti dall'ambito dell'Apprendimento Automatico o modelli rule-based. L'obiettivo di questo lavoro di progetto è impiegare, per la prima volta nella lingua italiana, le reti neurali ricorsive; valutare successivamente i benefici e infine confrontarli con i metodi precedentemente usati.
+\noindent Nel parlato, la prominenza è un fenomeno percettivo che può influire pesantemente sulla semantica delle frasi pronunciate, per questo guadagna un ruolo fondamentale nella comunicazione umana. Sono stati svolti in passato diversi sperimenti per rilevare le sillabe prominenti all'interno di una frase, che prevedevano l'utilizzo di svariati strumenti offerti dall'ambito dell'Apprendimento Automatico e dai modelli Rule-Based. L'obiettivo di questo lavoro di progetto è impiegare, per la prima volta nella lingua italiana, le reti neurali ricorsive; valutare successivamente i benefici e infine confrontarli con i metodi precedentemente usati.
 \end{abstract}
 }
 
@@ -114,30 +115,32 @@
 		\item[b.] \textit{È stato Luigi.}
 	\end{itemize}
 
-	In italiano le frasi interrogative sono un esempio di come il profilo intonativo del parlante sia fondamentale, perchè sintatticamente non sono marcate in alcun modo. Nel primo caso si ha un andamento finale ascendente, mentre nella frase dichiarativa tipicamente si tratta di un profilo finale discendente. In altri casi invece, il parlante accentua e/o allunga determinate parole, per concentrare l'attenzione dell'ascoltatore proprio in quel punto della sequenza.	 Si tratta ancora di informazioni difficilmente trasmissibili o per niente trasmissibili per vie sintattiche. I fenomeni prosidici sono quindi l'intonazione, il ritmo, la velocità di elocuzione, le pause e così via. L'oggetto di studio in questo lavoro è la \textbf{prominenza prosodica}, per la quale, più tardi, si cercherà di dare una definizione più esatta. Lo scopo ultimo, è quello di impiegare un particolare tipo di \textit{Reti Neurali Ricorsive} (\texttt{RNN}), cioè le \textit{Long-Short Term Memory} per l'identificazione automatica delle sillabe prominenti. Ancora meglio, si può dire che questo sia un problema di classificazione delle sillabe, prominenti e non, dove le caratteristiche di ogni sillaba dipendono dall'intero contesto in cui si trovano.
+	In italiano le frasi interrogative sono un esempio di come il profilo intonativo del parlante sia fondamentale, perché sintatticamente non sono marcate in alcun modo. Nel primo caso si ha un andamento finale ascendente, mentre nella frase dichiarativa tipicamente si tratta di un profilo finale discendente. In altri casi invece, il parlante accentua e/o allunga determinate parole, per concentrare l'attenzione dell'ascoltatore proprio in quel punto della sequenza.	 Si tratta ancora di informazioni difficilmente trasmissibili o per niente trasmissibili per vie sintattiche. I fenomeni prosidici sono quindi l'intonazione, il ritmo, la velocità di elocuzione, le pause e così via. L'oggetto di studio in questo lavoro è la \textbf{prominenza}, per la quale, più tardi, si cercherà di dare una definizione più esatta. Lo scopo ultimo, è quello di impiegare un particolare tipo di \textit{Reti Neurali Ricorsive} (\texttt{RNN}), cioè le \textit{Long-Short Term Memory} per l'identificazione automatica delle sillabe prominenti. Ancora meglio, si può dire che questo sia un problema di classificazione delle sillabe, prominenti e non, dove le caratteristiche di ogni sillaba dipendono dall'intero contesto in cui si trovano.
 	
 	Verrà qui esposto il modo in cui è stato affrontato il problema d'esame, preceduto però dalle informazioni necessarie allo studente per capire il problema trattato e il suo contesto, cioè dove si colloca all'interno del \textit{Natural Language Processing}. La relazione avrà quindi la seguente struttura:
 	\begin{itemize}
 		\item nella prima sezione si cercherà di definire meglio il dominio del problema, restringendolo;
-		\item nella seconda sezione verranno spiegati brevemente i principi che stanno alla base delle \texttt{RNN}, e del perché risultano utili;
-		\item la terza sezione
+		\item nella seconda sezione verranno spiegati brevemente i metodi di risoluzione del problema, in ambito \texttt{NLP};
+		\item la terza sezione descriverà brevemente un particolare lavoro di sperimentazione già eseguito, e grazie al quale si ha a disposizione un corpus;
+		\item la quarta sezione, sarà quella che approfondisce il nuovo strumento che si vuole usare per la costruzione del modello, cioè le \textit{Reti Neurali Ricorsive};
+		\item verrà poi spiegato nello specifico il metodo di risoluzione e visualizzati i risultati ottenuti nella quinta sezione.
 	\end{itemize}
 	
-\section{Prominenza Prosodica}\label{sec:prom}
+\section{Il Fenomeno della Prominenza}\label{sec:prom}
 	È stato detto che si vuole identificare automaticamente la prominenza, ma cosa significa esattamente? Non è proprio immediato dare una definizione, dal momento che gli studiosi addentratisi nel problema, arrivarono spesso a conclusioni divergenti, proponendo teorie e metodi diversi. Esaminando qualche rasségna in merito (\cite[Capitolo 1]{bib:fenomeni-prosodici-prominenza} e \cite{bib:prominence-by-acoustic-analyses}) è possibile vederlo. Talvolta i ricercatori vanno letteralmente in conflitto ridefinendo lo stesso termine, come per esempio lo \textit{stress}. Riprendendo però quanto detto in \cite{bib:prominence-by-acoustic-analyses}, si può così definire la prominenza:
 	\theoremstyle{plain}
 	\newtheorem{definition}{Definizione}
-	\begin{definition}[Prominenza Prosodica]\label{def:prosodic-prominency}
-		La prominenza prosodica è un fenomeno percettivo, continuo nella sua natura, che enfatizza alcune unità linguistiche e segmentali rispettivamente al contesto che li circonda, e viene supportata da una complessa interazione fra parametri prosodici e fonetico-acustici.
+	\begin{definition}[Prominenza]\label{def:prosodic-prominency}
+		La prominenza è un fenomeno percettivo, continuo nella sua natura, che enfatizza alcune unità linguistiche e segmentali rispettivamente al contesto che li circonda, e viene supportata da una complessa interazione fra parametri prosodici e fonetico-acustici.
 	\end{definition}
-	Da notare come la definizione fa riferimento a unità linguistiche segmentali all'interno dell'enunciato e, che queste siano dipendenti da altre unità linguistiche, che formano il contesto in cui si trovano. Questo sarà decisivo nel definire poi il metodo di risoluzione del problema. I parametri a cui si fa riferimento sono anche essi sempre stati oggetto di discussione. Uno degli obiettivi più importanti è sempre stato trovare un fenomeno linguistico/prosodico misurabile per supportare la percezione della prominenza. Fra tutti, e come suggerito in \cite{bib:prominence-by-acoustic-analyses}, si riporta come esempio lo studio di [KOHLER], che individua due impportanti attori al supporto della prominenza: il primo è il \textit{pitch accent} e riguarda il profilo della frequenza fondamentale; il secondo è il \textit{force accent}, più connesso a fenomeni acustici come intensità, durata del segmento e probabilmente altro. Il grado di prominenza dell'$i$-esimo segmento si può vedere come la somma di questi due parametri.
+	Da notare come la definizione fa riferimento a unità linguistiche segmentali all'interno dell'enunciato e, che queste siano dipendenti da altre unità linguistiche, che formano il contesto in cui si trovano. Questo sarà decisivo nel definire poi il metodo di risoluzione del problema. I parametri a cui si fa riferimento sono anche essi sempre stati oggetto di discussione. Uno degli obiettivi più importanti è sempre stato trovare un fenomeno linguistico/prosodico misurabile per supportare la percezione della prominenza. Fra tutti, e come suggerito in \cite{bib:prominence-by-acoustic-analyses}, si riporta come esempio uno studio che individua due impportanti attori al supporto della prominenza: il primo è il \textit{pitch accent} e riguarda il profilo della frequenza fondamentale; il secondo è il \textit{force accent}, più connesso a fenomeni acustici come intensità, durata del segmento e probabilmente altro. Il grado di prominenza dell'$i$-esimo segmento si può vedere come la somma di questi due parametri.
 
 	Ci si potrebbe ora chiedere se la prominenza di un segmento si può stabilire con un \textit{sì/no}, su una scala ordinale oppure su una scala continua. La prominenza per sua natura è un fenomeno continuo, ma la sua discretizzazione può comunque essere attuata, dipende dall'approccio che si adotta per risolvere il problema.
 	
-	Un'altra domanda che sorge, è se lo studio della prominenza esige che vengano fatte delle distinzioni interlinguistiche. La risposta è sì, in quanto si può rilevare la presenza delle così dette \textit{tone languages}, in cui il profilo del pitch è correlato al significato stesso della parola pronunciata (il tailandese). Una versione più rilassata di questo principio è, per esempio, il giapponese, dove questo ancoraggio fra prominenza e semantica è molto più limitato, e le sillabe prominenti non portano con sé un allungamento o una profondità maggiore, ma semplicemente un profilo di pitch alto. Infine troviamo le \textit{stress languages}, nelle quali il tono non incide in alcun modo sui significati lessicali delle parole (inglese), ma le sillabe vengono \textit{stressate} in funzione comunicativa. Questo discorso è stato approfodito ulteriormente, negli studi come quello di ([JUN]) che classifica le lingue in funzione di due dimensioni: prominenza e pattern ritmico. La prima dimensione è importante da considerare, mentre la seconda interessa poco in questa sede.
+	Un'altra domanda che sorge, è se lo studio della prominenza esige che vengano fatte delle distinzioni interlinguistiche. La risposta è sì, in quanto si può rilevare la presenza delle così dette \textit{tone languages}, in cui il profilo del pitch è correlato al significato stesso della parola pronunciata (il tailandese). Una versione più rilassata di questo principio è, per esempio, il giapponese, dove questo ancoraggio fra prominenza e semantica è molto più limitato, e le sillabe prominenti non portano con sé un allungamento o una profondità maggiore, ma semplicemente un profilo di pitch alto. Infine troviamo le \textit{stress languages}, nelle quali il tono non incide in alcun modo sui significati lessicali delle parole (inglese), ma le sillabe vengono \textit{stressate} in funzione comunicativa. Questo discorso è stato approfodito ulteriormente in alcuni studi, che classificano le lingue in funzione di due dimensioni: prominenza e pattern ritmico. La prima dimensione è importante da considerare, mentre la seconda interessa poco in questa sede.
 
 \section{Riconoscimento Automatico della Prominenza}\label{sec:ric}
-	Una volta definito e indagato il fenomeno della prominenza prosodica, è ora di chiedersi in che modo possa essere affrontato il problema del suo riconoscimento automatico. Si possono impiegare modelli computazionali che seguono due paradigmi diversi:
+	Una volta definito e indagato il fenomeno della prominenza, è ora di chiedersi in che modo possa essere affrontato il problema del suo riconoscimento automatico. Si possono impiegare modelli computazionali che seguono due paradigmi diversi:
 	\begin{enumerate}
 		\item \textit{Rule Based}, consiste nel fornire regole formali per la risoluzione di un dato problema;
 		\item \textit{Machine Learning}, viene retto un modello computazionale a partire da dati già esistenti, in questo caso da corpus annotati da esperti. 
@@ -156,7 +159,7 @@
 			\item[$c$:] scorrette previsioni di non prominenza;
 			\item[$d$:] corrette previsioni della prominenza.
 		\end{itemize}
-		In altre parole sarebbero, rispettivamente, le sillabe scartete correttamente; i falsi allarmi; le mancate individuazioni e le corrette individuazioni della prominenza. A partire da questi parametri si può già definire l'\textbf{accuratezza} $AC$, che esprime la percentuale di corrette classificazioni rispetto al totale numero delle sillabe:
+		In altre parole sarebbero, rispettivamente, le sillabe scartate correttamente; i falsi allarmi; le mancate individuazioni e le corrette individuazioni della prominenza. A partire da questi parametri si può già definire l'\textbf{accuratezza} $AC$, che esprime la percentuale di corrette classificazioni rispetto al totale numero delle sillabe:
 		\begin{equation}\label{eq:ac}
 			AC = (a + d) / (a + b + c + d)
 		\end{equation}
@@ -178,14 +181,13 @@
 	Per raggiungere l'obiettivo verrà usato lo stesso corpus dell'eperiménto \cite{bib:prominence-detection-italian}, che ora si andrà ad analizzare per avere un'adeguata comprensione.
 	
 	\subsection{L'esperimento orignario}
-		Esiste un'altra famiglia di sistemi \texttt{ML}, le \textit{Probabilistic Graphical Models} (\texttt{PGM}). Esse sono in grado di processare sequenze di dati in input facendo previsioni su quelle in output, considerando sia la sequenza di input attuale che quella di output precedente. Data quindi una generica sequenza di vettori $\{v^x_1, ..., v^x_n\}$ in input, contenenti le features, e data la sequenza $\{y_1, ..., y_n\}$ in output, i modelli di tipo \texttt{PGM} etichettano ogni $y_i$ nel modo più probabilmente opprtuno. Le \texttt{PGM} però sono un insieme di convinzioni per strutturare i modelli, e più tipi di \texttt{PGM} sono state usate in \cite{bib:prominence-detection-italian} per il riconoscimento automatico della prominenza.
+		Esiste un'altra famiglia di sistemi \texttt{ML}, le \textit{Probabilistic Graphical Models} (\texttt{PGM}). Esse sono in grado di elaborare sequenze di dati in input facendo previsioni su quelle in output, considerando sia la sequenza di input attuale che quella di output precedente. Data quindi una generica sequenza di vettori $\{v^x_1, ..., v^x_n\}$ in input, contenenti le features, e data la sequenza $\{y_1, ..., y_n\}$ in output, i modelli di tipo \texttt{PGM} etichettano ogni $y_i$ nel modo più probabilmente opprtuno. Le \texttt{PGM} però sono un insieme di convinzioni per strutturare i modelli, e più tipi di \texttt{PGM} sono state usate in \cite{bib:prominence-detection-italian} per il riconoscimento automatico della prominenza.
 	
 		Il corpus è stato costruito a partire da conversazioni di persone italiane provenienti dall'area di Pisa, sia femmine che maschi. Il corpus contiene un totale di $120$ espressioni segmentate, con una lunghezza media di $18$ sillabe che vanno da un minimo di $9$ a un massimo di $35$. Ai partecipanti fu chiesto poi di individuare quali fosse secondo loro le prominenze negli enunciati, presentando loro le segmentazioni. L'intero procedimento, in realtà più complesso, è descritto nel documento originale. Le sillabe sono state poi raggruppate in base alla percentuale di convergenza di etichettature da parte di tutti. Questi significa che, dato che ogni sillaba è stata valutata da $10$ persone, essa può essere giudicata prominente da più di $6$, $7$, $8$ o $9$ persone. Infine, sono state selezionate le sillabe convergenti nell'$80\%$ dei casi come prominenti, che sono il $23,56\%$ del totale. È stato fatto poi un'altro tipo di selezione, in cui il peso più importante veniva considerato il livello di affidabilità dei giudici. In questo caso risultavano prominenti il $33,46\%$ delle sillabe nel corpus.
 		
 	\subsection{Le features}
 		\begin{table*}[h]
 			\centering
-			\label{tab:gerarchia}
 			\caption{Gerarchia dei fenomeni coinvolti nel riconoscimento automatico della Prominenza}
 			\begin{tabular}{l|c|c|c|c}
 				\hline
@@ -193,6 +195,7 @@
 				Fenomeni prosodici  & \multicolumn{2}{c}{Stress}                                         & \multicolumn{2}{c}{Pitch accent}                                                                                       \\ \hline
 				Fenomeni acustici   & durata & \begin{tabular}[c]{@{}c@{}}enfasi\\ spettrale\end{tabular} & \begin{tabular}[c]{@{}c@{}}movimenti\\ in F0\end{tabular} & \begin{tabular}[c]{@{}c@{}}intensità\\ globale\end{tabular} \\ \hline
 			\end{tabular}
+			\label{tab:gerarchia}
 		\end{table*}
 		\begin{table*}[h]
 			\centering
@@ -229,11 +232,11 @@
 		\caption{\textit{Unrolling} di una rete neurale ricorsiva}
 		\label{fig:unroll}
 	\end{figure*}
-	La Definizione \ref{def:prosodic-prominency} della prominenza prosodica classifica tale fenomeno come continuo e marcato rispettivamente al contensto che lo circonda. Questo significa che le tradizionali reti neurali non possono affrontare un problema del genere, non è chiaro infatti come possano analizzare per esempio, il significato di una parola quando esso dipende da quanto è stato precedentemente detto.
+	La Definizione \ref{def:prosodic-prominency} della prominenza classifica tale fenomeno come continuo e marcato rispettivamente al contensto che lo circonda. Questo significa che le tradizionali reti neurali non possono affrontare un problema del genere, non è chiaro infatti come possano analizzare per esempio, il significato di una parola quando esso dipende da quanto è stato precedentemente detto.
 	
 	Le \textit{Reti Neurali Ricorsive} (\texttt{RNN}) sembrano ovviare a questo problema. Le \texttt{RNN} sono un tipo di rete contenente al loro interno dei cicli, ciò rende possibile che le stesse informazioni persistano al loro interno.
 
-	Nella Figura \ref{fig:unroll} si può vedere come, preso un ciclo, una \texttt{RNN} si può interpretare come una successione di copie della stessa rete. La loro struttura \textit{a catena} si adatta perfettamente al processamento di sequenze e liste. L'interpretazione è la seguente: data un porzione di rete $A$, essa guarda l'input $x_t$ e produce l'output $h_t$, permettendo tramite il loop di passare l'informazione dal passo $t$ a $t + 1$. Una \texttt{RNN} può quindi guardare dietro nel tempo, individuare una dipendenza fra passato e presente e quindi produrre l'output più opportuno. La domanda ora è la seguente: \textit{quanto} indietro nel tempo? Sfortunatamente, le \texttt{RNN} perdono efficacia man mano che la distanza tra passato interessante e presente aumenta.
+	Nella Figura \ref{fig:unroll} si può vedere come, preso un ciclo, una \texttt{RNN} si può interpretare come una successione di copie della stessa rete. La loro struttura \textit{a catena} si adatta perfettamente all'elaborazione di sequenze e liste. L'interpretazione è la seguente: data un porzione di rete $A$, essa guarda l'input $x_t$ e produce l'output $h_t$, permettendo tramite il loop di passare l'informazione dal passo $t$ a $t + 1$. Una \texttt{RNN} può quindi guardare dietro nel tempo, individuare una dipendenza fra passato e presente e quindi produrre l'output più opportuno. La domanda ora è la seguente: \textit{quanto} indietro nel tempo? Sfortunatamente, le \texttt{RNN} perdono efficacia man mano che la distanza tra passato interessante e presente aumenta.
 	
 	\subsection{Long Short Term Memory}\label{subsec:lstm}
 		Le \textit{Long Short Term Memory} (\texttt{LSTM}) sono un particolare tipo di \texttt{RNN} capaci di apprendere dipendenze a lungo termine. Infatti, le \texttt{LSTM} sono state proposte proprio per ovviare al problema delle \texttt{RNN} precedentemente descritto. I moduli, in questo tipo di architettura (Figura \ref{fig:lstm}), racchiudono al loro interno più layer con funzione di attivazione \texttt{sigmoid} e \texttt{tanh} che interagiscono fra loro in maniera ben specifica.
@@ -298,10 +301,10 @@
 			\end{equation}
 			La \textit{mappa} dei parametri appena esposti si possono intuitivamente osservare nella Figura \ref{fig:parmap}.
 		
-		La breve spiegazione qui fornita riflette i concetti base\footnote{\url{http://colah.github.io/posts/2015-08-Understanding-LSTMs/}}, esistono comunque parecchie versioni concettuali che variano sensibilmente e ancora più numerose sono le implementazioni.
+		La breve spiegazione qui fornita riflette i concetti base\footnote{Cristopher Olah, \emph{\href{http://colah.github.io/posts/2015-08-Understanding-LSTMs/}{Understanding LSTM Networks.}}}, esistono comunque parecchie versioni concettuali che variano sensibilmente e ancora più numerose sono le implementazioni.
 		
 	\subsection{Un problema di Sequenze}
-		Il motivo per cui le \texttt{LSTM} sono adatte a trattare il riconoscimento automatico della prominenza è che sono in grado di processare \textit{sequenze} di vettori\footnote{\url{http://karpathy.github.io/2015/05/21/rnn-effectiveness/}}, che rappresentano le \textit{features}, e restituire sequenze di dimensione fissa a piacere. Ed è anche il motivo per il quale vengono usate nel trattamento dei video, testi, immagini, problemi \texttt{NLP}, e altro. I problemi sono risolvibili (classificazione, previsione, ecc...) tramite forme di mappatura rappresentati nella Figura \ref{fig:seqs}.	In base al tipo di mapping scelto, varia l'architettura della \textit{Rete Neurale Ricorsiva}. Vedremo nella prossima sezione come risulta l'architettura nel nostro caso.
+		Il motivo per cui le \texttt{LSTM} sono adatte a trattare il riconoscimento automatico della prominenza è che sono in grado di elaborare \textit{sequenze} di vettori\footnote{Andrej Karpathy, \emph{\href{http://karpathy.github.io/2015/05/21/rnn-effectiveness/}{The Unreasonable Effectiveness of Recurrent Neural Networks.}}}, che rappresentano le \textit{features}, e restituire sequenze di dimensione fissa a piacere. Ed è anche il motivo per il quale vengono usate nel trattamento dei video, testi, immagini, problemi \texttt{NLP}, e altro. I problemi sono risolvibili (classificazione, previsione, ecc...) tramite forme di mappatura rappresentati nella Figura \ref{fig:seqs}.	In base al tipo di mapping scelto, varia l'architettura della \textit{Rete Neurale Ricorsiva}. Vedremo nella prossima sezione come risulta l'architettura nel nostro caso.
 		
 		\begin{figure*}[h]
 			\centering
@@ -358,32 +361,35 @@
 		
 		Per cercare altre vie è stato asserito che $p_i \in \{\{0, 1\}, \{1, 0\}\}$, dove $1$ nella prima posizione stava per indicare che la sillaba non è prominente e nella seconda posizione il contrario. Per realizzare la cosa è stato impostato \texttt{TimeDistributed(Dense(2))} come strato finale, con funzione di attivazione \texttt{softmax}, in modo che ritornasse dati in dimensione $(34, 2)$, con probabilità accumulata in una delle due posizioni. I sistemi risultanti davano un migliorato score $F1$ ma l'accuratezza era parecchio calata, a circa il $60\%$.
 		
-		È stato infine intuito che la \textit{sporcizia} è data dalle sillabe mancanti: per qualche motivo lo strato \texttt{Masking} non dava i risultati sperati. Il problema è stato raggirato togliendo tale strato e, decidendo di non ignorare le sillabe mancanti, ma di classificare pure quelle. L'output per ogni \textit{timestep} è quindi diventato $p_i \in \{\{1, 0, 0\}, \{0, 1, 0\}, \{0, 0, 1\}\}$ (per indicare rispettivamente non prominenza, prominenza e assenza). Infinie, l'ultimo layer \texttt{Dense(3)} con attivazione \texttt{softmax} e dentro uno wrapper \texttt{TimeDistributed}, avrebbe concentrato le probabilità in una delle $3$ posizioni.
+		È stato infine intuito che la \textit{sporcizia} è data dalle sillabe mancanti: per qualche motivo lo strato \texttt{Masking} non dava i risultati sperati, e le sillabe mancanti venivano denotate dalla rete come un'assoluta incertezza in cui alle entrambi posizioni veniva assegnata una probabilità del $50\%$.  Il problema è stato raggirato togliendo tale strato e, decidendo di non ignorare le sillabe mancanti, ma di classificare pure quelle. L'output per ogni \textit{timestep} è quindi diventato $p_i \in \{\{1, 0, 0\}, \{0, 1, 0\}, \{0, 0, 1\}\}$ (per indicare rispettivamente non prominenza, prominenza e assenza). Infinie, l'ultimo layer \texttt{Dense(3)} con attivazione \texttt{softmax} e dentro uno wrapper \texttt{TimeDistributed}, avrebbe concentrato le probabilità in una delle $3$ posizioni.
 		
 	\subsection{Bidirectional \texttt{LSTM}}
 		\begin{figure}
 			\centering
-			\label{fig:blstm}
 			\includegraphics[scale=.26]{img/blstm.png}
-			\caption{Codice abbreviato del modello con i migliori risultati}
+			\caption{Architettura astratta di una rete \texttt{BLSTM}}
+			\label{fig:blstm}
 		\end{figure}
 		\begin{figure*}[ht!]
 			\centering
-			\caption{Parametri calcolati nelle prime fasi}
+			\caption{Costruzione del modello con \texttt{Keras}}
 			\lstinputlisting[language=Python]{code/seq.py}
 			\label{fig:modelcode}
 		\end{figure*}
 		\begin{table*}[]
 			\centering
-			\caption{My caption}
+			\caption{Risultati ottenuti in seguito al lavoro di progetto.}
 			\label{tab:results}
-			\begin{tabular}{lcccc}
+			\begin{tabular}{clcccc}
 				\hline
-				& \multicolumn{1}{l}{Accuratezza A} & \multicolumn{1}{l}{Precisione P} & \multicolumn{1}{l}{Richiamo R} & \multicolumn{1}{l}{Fmeasure F1} \\ \hline
-				LDCNF best-3 & 85.50\% & 83.10\% & 71.80\% & 77.00\% \\
-				LSTM\_17 & 90.83\% & 86.35\% & 86.08\% & 86.22\% \\
-				LSTM\_34 & 90.88\% & 86.38\% & 86.24\% & 86.31\% \\
-				\textbf{BLSTM\_17x2} & \textbf{91.39\%} & \textbf{87.11\%} & \textbf{87.04\%} & \textbf{87.07\%} \\ \hline
+				\multicolumn{1}{l}{} & Modello & \multicolumn{1}{l}{Accuratezza A} & \multicolumn{1}{l}{Precisione P} & \multicolumn{1}{l}{Richiamo R} & \multicolumn{1}{l}{Fmeasure F1} \\ \hline
+				\multirow{4}{*}{\begin{tabular}[c]{@{}c@{}}Dataset\\ Originale\end{tabular}} & LDCNF best-3 & 85.50\% & 83.10\% & 71.80\% & 77.00\% \\
+				& LSTM\_17 & 90.54\% & 86.05\% & 85.47\% & 85.75\% \\
+				& LSTM\_34 & 91.04\% & \textbf{86.92\%} & 86.06\% & 86.48\% \\
+				& BLSTM\_17x2 & \textbf{91.04\%} & 86.59\% & \textbf{86.51\%} & \textbf{86.55\%} \\ \hline
+				\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Dataset\\ Modificato\end{tabular}} & LSTM\_17 & 90.83\% & 86.35\% & 86.08\% & 86.22\% \\
+				& LSTM\_34 & 90.88\% & 86.38\% & 86.24\% & 86.31\% \\
+				& \textbf{BLSTM\_17x2} & \textbf{91.39\%} & \textbf{87.11\%} & \textbf{87.04\%} & \textbf{87.07\%} \\ \hline
 			\end{tabular}
 		\end{table*}
 		In base a prove empiriche la scelta finale è ricaduta sulla seguente architettura, in ordine:
@@ -392,17 +398,22 @@
 			\item \texttt{Dropout} Layer;
 			\item \texttt{Dense} layer contenuto dentro wrapper \texttt{TimeDistributed}.
 		\end{itemize}
-		In seguito ad alcune ricerche è stato scoperto che una versione di rete \texttt{LSTM}, ovvero le \textit{Bidirectional} \texttt{LSTM} (\texttt{BLSTM}), si comportano molto bene nei problemi di \textit{sequence-labeling} in ambito \texttt{NLP} (come nel seguente lavoro \cite[Capitolo 5]{bib:blstm}). Sono state messe alla prova, incapuslando una rete \texttt{LSTM} dentro uno wrapper \texttt{Bidirectional} comodamente offerto da \texttt{Keras}. L'idea che sta alla base delle reti \texttt{BLSTM} è che un dato output $y_t$ non dipende solo dalle esperienze passate ma anche da quelle $future$. Esse racchiudono infatti uno strato \texttt{LSTM} \textit{forward} un'altro detto \texttt{backward} (Figura \ref{fig:blstm}), creando una doppia dipendenza. Probabilmente non sempre si hanno a disposizione informazioni future, per le applicazioni in tempo reale, ma in questo caso si può testare il comportamento di un'architettura del genere, in quanto una sillaba prominente lo è anche perché quelle dopo lo sono di meno.
+		In seguito ad alcune ricerche è stato scoperto che una versione di rete \texttt{LSTM}, ovvero le \textit{Bidirectional} \texttt{LSTM} (\texttt{BLSTM}), si comportano molto bene nei problemi di \textit{sequence-labeling} in ambito \texttt{NLP} (come nel seguente lavoro \cite[Capitolo 5]{bib:blstm}). Sono state messe alla prova, incapuslando una rete \texttt{LSTM} dentro uno wrapper \texttt{Bidirectional} comodamente offerto da \texttt{Keras}. L'idea che sta alla base delle reti \texttt{BLSTM} è che un dato output $y_t$ non dipende solo dalle esperienze passate ma anche da quelle $future$. Esse racchiudono infatti uno strato \texttt{LSTM} \textit{forward} un'altro detto \texttt{backward} (Figura \ref{fig:blstm}), creando una doppia dipendenza. Probabilmente non sempre un modello può guaradere \textit{avanti}, ma in questo caso si può testare il comportamento di un'architettura del genere, in quanto una sillaba prominente lo è anche perché quelle dopo lo sono di meno. La struttura a pila è quindi diventata:
+		\begin{itemize}
+			\item \texttt{LSTM} contenuto dentro \texttt{Bidirectional};
+			\item \texttt{Dropout} Layer;
+			\item \texttt{Dense} dentro \texttt{TimeDistributed}.
+		\end{itemize}
 	
 	\subsection{Risultati}
-		Venendo al dunque, una frase nel corpus è stata eliminata in quanto contenente possibili errori. Delle $119$ frasi a disposizione, il \textit{training-set} ne contiene $85$; il \textit{validation-set} $15$ e il \textit{test-set} $19$. Nei test riportati qui rientrano i $3$ modelli che si sono comportati meglio in assoluto: \texttt{LSTM} a $n/2 = 17$ celle; \texttt{LSTM} a $n = 34$ celle; e infine una \texttt{BLSTM} con $n/2$ celle per ognuno dei due strati interni. Parte del codice è stato riportato nella Figura \ref{fig:modelcode}. Sono state provate diverse dimensioni di \texttt{batch} e numero di epoche, $50$ epoche sono sembrate sufficienti in quanto troppe epoche portavano a fenomeni di \textit{overfitting}.
+		Venendo al dunque, una frase nel corpus è stata eliminata in quanto contenente possibili errori (per ogni sillaba $4$ features su $5$ erano zeri). Delle $119$ frasi a disposizione, il \textit{training-set} ne contiene $85$; il \textit{validation-set} $15$ e il \textit{test-set} $19$. Nei test riportati qui rientrano i $3$ modelli che si sono comportati meglio in assoluto: \texttt{LSTM} a $n/2 = 17$ celle; \texttt{LSTM} a $n = 34$ celle; e infine una \texttt{BLSTM} con $n/2$ celle per ognuno dei due strati interni. Parte del codice è stato riportato nella Figura \ref{fig:modelcode}. Sono state provate diverse dimensioni di \texttt{batch} e numero di epoche, $50$ epoche sono sembrate sufficienti in quanto troppe epoche portavano a fenomeni di \textit{overfitting}.
 		
-		Sono state realizzate $20$ fasi di apprendimento, cambiando l'ordine delle espressioni nel corpus casualmente ogni volta ed estraendo alla fine le $4$ metriche per poi farne la media. I risultati finali sono riportati nella Tabella \ref{tab:results}.
+		Sono state realizzate $20$ fasi di apprendimento, cambiando l'ordine delle espressioni nel corpus casualmente ogni volta ed estraendo alla fine le $4$ metriche per poi farne la media. I risultati finali sono riportati nella Tabella \ref{tab:results}, dove per poter fare un confronto equo con le \texttt{LDCNF} sono state fatte delle prove anche sul vecchio dataset, contenente l'enunciato con caratteristiche anomale, ma anche per osservare meglio l'impatto dell'errore individuato. Usando il dataset orignale si può vedere come le metriche calano sensibilmente, ciò è dovuto probabilmente ai casi in cui l'enunciato anomalo finisce nel \texttt{testset}.
 	
 \section{Conclusione}
-	partendo da zero è stato indagato il fenomeno della prominenza, reti lstm bla bla bla
-
-% campionandoli casualmente e ripetendo la procedura di campionamento/training/valutazione risultati per 20 volte e mediando le performance finali.	
+	In questo lavoro di progetto, partendo da zero, è stato approfondito il fenomeno della prosodia nell'ambito \textit{Natural Language Processing}. Una volta capiti i fenomeni sottostanti che la supportano, in una determinata gerarchia, è stato analizzato lo studio \cite{bib:prominence-detection-italian}. Allo scopo di ripetere lo stesso sperimento, usando lo stesso corpus, sono state studiate le \textit{Reti Neurali Ricorsive}, e in particolare le \textit{Long Short Term Memory}. Una volta costruito il modello ed eseguite le necessarie fasi di apprendimento, è stato fatto un procedimento analogo usando reti \textit{Long Short Term Memory Bidirectional}, dove gli output diventano dipendenti anche dal \textit{"futuro"}.
+	
+	Concludendo si può dire che i modelli \texttt{PGM} sono stati superati di ben $10$ punti per quanto riguarda la \textit{Fmeasure}, tale risultato è dato dall'incremento signicativo della metrica \textit{recall}, alzatasi di ben $15$ punti. Si può anche dire che l'introduzione di dipendenze a doppio senso (\texttt{BLSTM}) introduce ulteriori miglioramenti.
 		
 \begin{thebibliography}{99}	
 	\bibitem{bib:fenomeni-prosodici-prominenza}

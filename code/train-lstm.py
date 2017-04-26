@@ -1,5 +1,5 @@
 '''
-    Prosodic prominence detection in Italian continuous speech using BLSTMs
+    Prosodic prominence detection in Italian continuous speech using LSTMs
 
     Coded by: Maxim Gaina, maxim.gaina@yandex.ru
     Datasets provided by: Fabio Tamburini, fabio.tamburini@unibo.it
@@ -20,7 +20,7 @@ import sys
 
 
 # Dataset path
-PATH = '../corpus/NSYLxALL_X3.csv'
+PATH = '../corpus/NSYLxALL_X3_full.csv'
 
 # Features per syllable and its evaluation
 COLUMNS = ['nucleus-duration',
@@ -35,7 +35,7 @@ LEARNING_PHASES = 20
 #TRAINSET_LEGTH = 85; VALIDATIONSET_LENGHT = 15; TESTSET_LENGTH = 19
 TRAIN_INDEXES = numpy.arange(85)
 VALIDATION_INDEXES = numpy.arange(85, 100)
-TESTSET_INDEXES = numpy.arange(100, 119)
+TESTSET_INDEXES = numpy.arange(100, 120)
 
 dataFrame = pandas.read_csv(PATH, delim_whitespace = True,
                             header = None,
@@ -140,8 +140,8 @@ for learning_phase in range(LEARNING_PHASES):
                 nb_epoch = 50, batch_size = 2)
 
     metrics = model.evaluate(x_dataset[TESTSET_INDEXES],
-                            y_dataset[TESTSET_INDEXES],
-                            verbose = 1)
+                             y_dataset[TESTSET_INDEXES],
+                             verbose = 1)
 
     print ("Learning phase", learning_phase + 1, "scores:")
     print ("\tAccuracy %.2f%%" % (metrics[1] * 100))
