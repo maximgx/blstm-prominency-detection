@@ -378,18 +378,15 @@
 		\end{figure*}
 		\begin{table*}[]
 			\centering
-			\caption{Risultati ottenuti in seguito al lavoro di progetto.}
+			\caption{Risultati ottenuti in seguito al lavoro di progetto, confrontati con il modello \texttt{LDCNF}.}
 			\label{tab:results}
-			\begin{tabular}{clcccc}
+			\begin{tabular}{lcccc}
 				\hline
-				\multicolumn{1}{l}{} & Modello & \multicolumn{1}{l}{Accuratezza A} & \multicolumn{1}{l}{Precisione P} & \multicolumn{1}{l}{Richiamo R} & \multicolumn{1}{l}{Fmeasure F1} \\ \hline
-				\multirow{4}{*}{\begin{tabular}[c]{@{}c@{}}Dataset\\ Originale\end{tabular}} & LDCNF best-3 & 85.50\% & 83.10\% & 71.80\% & 77.00\% \\
-				& LSTM\_17 & 90.54\% & 86.05\% & 85.47\% & 85.75\% \\
-				& LSTM\_34 & 91.04\% & \textbf{86.92\%} & 86.06\% & 86.48\% \\
-				& BLSTM\_17x2 & \textbf{91.04\%} & 86.59\% & \textbf{86.51\%} & \textbf{86.55\%} \\ \hline
-				\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Dataset\\ Modificato\end{tabular}} & LSTM\_17 & 90.83\% & 86.35\% & 86.08\% & 86.22\% \\
-				& LSTM\_34 & 90.88\% & 86.38\% & 86.24\% & 86.31\% \\
-				& \textbf{BLSTM\_17x2} & \textbf{91.39\%} & \textbf{87.11\%} & \textbf{87.04\%} & \textbf{87.07\%} \\ \hline
+				Modello              & \multicolumn{1}{l}{Accuratezza A} & \multicolumn{1}{l}{Precisione P} & \multicolumn{1}{l}{Richiamo R} & \multicolumn{1}{l}{Fmeasure F1} \\ \hline
+				LDCNF best-3         & 85.50\%                           & 83.10\%                          & 71.80\%                        & 77.00\%                         \\
+				LSTM\_17             & 91.99\%                           & 88.66\%                          & 87.13\%                        & 87.88\%                         \\
+				LSTM\_34             & 92.27\%                           & 88.84\%                          & 87.84\%                        & 88.33\%                         \\
+				\textbf{BLSTM\_17x2} & \textbf{94.28\%}                  & \textbf{91.57\%}                 & \textbf{91.25\%}               & \textbf{91.41\%}                \\ \hline
 			\end{tabular}
 		\end{table*}
 		In base a prove empiriche la scelta finale è ricaduta sulla seguente architettura, in ordine:
@@ -406,9 +403,9 @@
 		\end{itemize}
 	
 	\subsection{Risultati}
-		Venendo al dunque, una frase nel corpus è stata eliminata in quanto contenente possibili errori (per ogni sillaba $4$ features su $5$ erano zeri). Delle $119$ frasi a disposizione, il \textit{training-set} ne contiene $85$; il \textit{validation-set} $15$ e il \textit{test-set} $19$. Nei test riportati qui rientrano i $3$ modelli che si sono comportati meglio in assoluto: \texttt{LSTM} a $n/2 = 17$ celle; \texttt{LSTM} a $n = 34$ celle; e infine una \texttt{BLSTM} con $n/2$ celle per ognuno dei due strati interni. Parte del codice è stato riportato nella Figura \ref{fig:modelcode}. Sono state provate diverse dimensioni di \texttt{batch} e numero di epoche, $50$ epoche sono sembrate sufficienti in quanto troppe epoche portavano a fenomeni di \textit{overfitting}.
+		Venendo al dunque, delle $120$ frasi a disposizione, il \textit{training-set} ne contiene $85$; il \textit{validation-set} $15$ e il \textit{test-set} $20$. Nei test riportati qui rientrano i $3$ modelli che si sono comportati meglio in assoluto: \texttt{LSTM} a $n/2 = 17$ celle; \texttt{LSTM} a $n = 34$ celle; e infine una \texttt{BLSTM} con $n/2$ celle per ognuno dei due strati interni. Parte del codice è stato riportato nella Figura \ref{fig:modelcode}. Sono state provate diverse dimensioni di \texttt{batch} e numero di epoche, $50$ epoche sono sembrate sufficienti in quanto troppe epoche portavano a fenomeni di \textit{overfitting}.
 		
-		Sono state realizzate $20$ fasi di apprendimento, cambiando l'ordine delle espressioni nel corpus casualmente ogni volta ed estraendo alla fine le $4$ metriche per poi farne la media. I risultati finali sono riportati nella Tabella \ref{tab:results}, dove per poter fare un confronto equo con le \texttt{LDCNF} sono state fatte delle prove anche sul vecchio dataset, contenente l'enunciato con caratteristiche anomale, ma anche per osservare meglio l'impatto dell'errore individuato. Usando il dataset orignale si può vedere come le metriche calano sensibilmente, ciò è dovuto probabilmente ai casi in cui l'enunciato anomalo finisce nel \texttt{testset}.
+		Sono state realizzate $20$ fasi di apprendimento, cambiando l'ordine delle espressioni nel corpus casualmente ogni volta ed estraendo alla fine le $4$ metriche per poi farne la media. I risultati finali sono riportati nella Tabella \ref{tab:results}.
 	
 \section{Conclusione}
 	In questo lavoro di progetto, partendo da zero, è stato approfondito il fenomeno della prosodia nell'ambito \textit{Natural Language Processing}. Una volta capiti i fenomeni sottostanti che la supportano, in una determinata gerarchia, è stato analizzato lo studio \cite{bib:prominence-detection-italian}. Allo scopo di ripetere lo stesso sperimento, usando lo stesso corpus, sono state studiate le \textit{Reti Neurali Ricorsive}, e in particolare le \textit{Long Short Term Memory}. Una volta costruito il modello ed eseguite le necessarie fasi di apprendimento, è stato fatto un procedimento analogo usando reti \textit{Long Short Term Memory Bidirectional}, dove gli output diventano dipendenti anche dal \textit{"futuro"}.
