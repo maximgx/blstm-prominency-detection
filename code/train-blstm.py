@@ -20,7 +20,7 @@ import sys
 
 
 # Dataset path
-PATH = '../corpus/NSYLxALL_X3.csv'
+PATH = '../corpus/NSYLxWork.csv'
 
 # Features per syllable and its evaluation
 COLUMNS = ['nucleus-duration',
@@ -35,15 +35,8 @@ LEARNING_PHASES = 20
 #TRAINSET_LEGTH = 85; VALIDATIONSET_LENGHT = 15; TESTSET_LENGTH = 19
 TRAIN_INDEXES = numpy.arange(85)
 VALIDATION_INDEXES = numpy.arange(85, 100)
-TESTSET_INDEXES = numpy.arange(100, 119)
+TESTSET_INDEXES = numpy.arange(100, 120)
 
-'''
-            ERROR       NO ERROR (new)
-Accuracy    91.04%      91.17%
-Precision   86.59%      86.77%
-Recall      86.51%      86.73%
-F1:         86.55%      86.75%
-'''
 
 dataFrame = pandas.read_csv(PATH, delim_whitespace = True,
                             header = None,
@@ -117,6 +110,9 @@ indexes = numpy.arange(total_expressions)
 scores = []
 
 numpy.set_printoptions(threshold = sys.maxsize)
+numpy.set_printoptions(threshold = sys.maxsize)
+print (x_dataset[119])
+print (y_dataset[119])
 
 for learning_phase in range(LEARNING_PHASES):
     numpy.random.shuffle(indexes)

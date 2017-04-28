@@ -20,7 +20,7 @@ import sys
 
 
 # Dataset path
-PATH = '../corpus/NSYLxALL_X3_full.csv'
+PATH = '../corpus/NSYLxWork.csv'
 
 # Features per syllable and its evaluation
 COLUMNS = ['nucleus-duration',
@@ -120,7 +120,7 @@ for learning_phase in range(LEARNING_PHASES):
     # Building Model
     model = Sequential()
     # 17 memory cells seems to be the best choice
-    model.add(LSTM(34, return_sequences = True,
+    model.add(LSTM(17, return_sequences = True,
                             input_shape = (max_utterance_length, len(COLUMNS) - 1)))
     model.add(Dropout(0.5))
     # Gives a sequence of triples (one triple per each syllable) where each element
